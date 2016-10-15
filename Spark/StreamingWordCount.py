@@ -14,6 +14,6 @@ wordCounts = pairs.reduceByKey(lambda x, y: x + y)
 
 # Print the first ten elements of each RDD generated in this DStream to the console
 wordCounts.pprint()
-wordCounts.saveAsTextFiles("hdfs:///user/cloudera/output/sparkstream/")
+#wordCounts.saveAsTextFiles("hdfs:///user/cloudera/output/sparkstream/sparkstream")
 ssc.start()             # Start the computation
 ssc.awaitTermination()  # Wait for the computation to terminate
