@@ -1,6 +1,6 @@
 start flume-service
 
-$ sudo service flume-ng-agent <start | stop | restart> 
+$ sudo service flume-ng-agent restart 
 
 coppy flume.conf to /etc/flume-ng/conf/flume.conf 
 
