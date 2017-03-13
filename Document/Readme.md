@@ -21,7 +21,7 @@ $ hadoop jar wordcount.jar org.myorg.WordCount /user/cloudera/input/* /user/clou
 ## LAB 4 HBASE
 ```
 $ hbase shell
-  hbase(main):001:0> create 'employee', 'personal data', 'professionaldata'
+  hbase(main):001:0> create 'employee', 'personal data', 'professional data'
   hbase(main):002:0> list
   hbase(main):003:0> put 'employee','1','personal data:name','raju'
   hbase(main):005:0> put 'employee','1','personal data:city','hyderabad'
