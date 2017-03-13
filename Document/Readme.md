@@ -1,6 +1,6 @@
 ## LAB 2 Hadoop File System (HDFS)
-> mkdir gue>st1
-> cd guest1
+> mkdir guest1 \n
+> cd guest1 \n
 > wget https://github.com/bobbylovemovie/trainbigdata/raw/master/HDFS/PG2600.txt
 > hadoop fs -mkdir /user/cloudera/input
 > hadoop fs -ls /user/cloudera/input
