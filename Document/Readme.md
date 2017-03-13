@@ -15,6 +15,7 @@ Open Web Browser : http://quickstart.cloudera:8888
 ```
 $ cd guest1 
 $ wget https://github.com/bobbylovemovie/trainbigdata/raw/master/HDFS/wordcount.jar
+$ hadoop jar wordcount.jar org.myorg.WordCount /user/cloudera/input/* /user/cloudera/output/wordcount
 ```
 
 ## LAB 4 HBASE
