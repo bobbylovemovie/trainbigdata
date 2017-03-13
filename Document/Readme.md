@@ -28,7 +28,38 @@ $ hbase shell
   hbase(main):007:0> put 'employee','1','professional data:salary','5000'
   
   hbase(main):025:0> put 'employee','2','personal data:name','bobby'
-  
-  
 ```
+
+## LAB 5 HIVE
+```
+$ hive
+hive> CREATE TABLE TEST_TBL(ID INT,COUNTRY STRING) ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' STORED AS TEXTFILE ;
+hive> SHOW TABLES;
+hive> describe test_tbl;
+hive > alter table test_tbl add columns (remarks STRING);
+hive > describe test_tbl;
+hive > drop table test_tbl;
+hive > quit;
+```
+** Load Data From MovieLens To Hive
+```
+$ mkdir movielens_dataset
+$ cd movielens_dataset
+$ wget http://files.grouplens.org/datasets/movielens/ml-100k.zip
+$ unzip ml-100k.zip
+$ more ml-100k/u.user
+
+$ cd ml-100k
+$ hadoop fs -mkdir /user/cloudera/movielens
+$ hadoop fs -put u.user /user/cloudera/movielens
+$ hadoop fs -ls /user/cloudera/movielens
+$ hive
+hive> create external table users (userid int,age int,gender string,occupation string ,zipcode string) row format delimited fields terminated by '|' stored as textfile location '/user/cloudera/movielens' ;
+hive > select * from users;
+
+```
+
+
+
+
 
