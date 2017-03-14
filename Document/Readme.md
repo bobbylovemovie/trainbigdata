@@ -55,10 +55,17 @@ $ hadoop fs -mkdir /user/cloudera/movielens
 $ hadoop fs -put u.user /user/cloudera/movielens
 $ hadoop fs -ls /user/cloudera/movielens
 $ hive
-hive> create external table users (userid int,age int,gender string,occupation string ,zipcode string) row format delimited fields terminated by '|' stored as textfile location '/user/cloudera/movielens' ;
+hive > create external table users (userid int,age int,gender string,occupation string ,zipcode string) row format delimited fields terminated by '|' stored as textfile location '/user/cloudera/movielens' ;
 hive > select * from users;
 
 ```
+## LAB 6 IMPALA
+```
+$ impala-shell
+[quickstart.cloudera:21000] > select * from users;
+
+```
+## LAB 7 APACHE FLUME
 
 
 
