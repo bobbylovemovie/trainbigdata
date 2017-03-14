@@ -66,6 +66,73 @@ $ impala-shell
 
 ```
 ## LAB 7 APACHE FLUME
+```
+$ cd /etc/flume-ng/conf/
+$ sudo rm flume.conf
+$ sudo wget https://github.com/bobbylovemovie/trainbigdata/raw/master/flume/flume.conf
+$ cat flume.conf
+
+## start flume-service
+$ sudo service flume-ng-agent restart
+
+## start flume Agent
+$ sudo flume-ng agent --conf /etc/flume-ng/conf/ --conf-file /etc/flume-ng/conf/flume.conf --name agent -Dflume.root.logger=INFO,console
+
+## Open New Terminal
+$ sudo yum install telnet
+$ telnet localhost 3030
+
+```
+## LAB 8 APACHE SQOOP
+```
+## Configuring MySQL On Cloudera.Quickstart
+$ sudo /usr/bin/mysql_secure_installation
+  Enter current password for root (enter for none): cloudera
+  OK, successfully used password, moving on...
+  Set root password? [Y/n] N
+  Remove anonymous users? [Y/n] Y
+  Disallow root login remotely? [Y/n] N
+  Remove test database and access to it [Y/n] Y
+  Reload privilege tables now? [Y/n] Y
+  All done!
+  
+## Running MySQL
+$ mysql -uroot -p"cloudera"
+mysql> show databases;
+mysql> CREATE DATABASE test_mysql_db;
+mysql> USE test_mysql_db;
+mysql> CREATE TABLE country_tbl(id INT NOT NULL, country VARCHAR(50), PRIMARY KEY (id));
+mysql> INSERT INTO country_tbl VALUES(1, 'USA');
+mysql> INSERT INTO country_tbl VALUES(2, 'CANADA');
+mysql> INSERT INTO country_tbl VALUES(3, 'Mexico');
+mysql> INSERT INTO country_tbl VALUES(4, 'Brazil');
+mysql> INSERT INTO country_tbl VALUES(61, 'Japan');
+mysql> INSERT INTO country_tbl VALUES(65, 'Singapore');
+mysql> INSERT INTO country_tbl VALUES(66, 'Thailand');
+mysql> SELECT * FROM country_tbl;
+mysql> exit;
+
+## Importing data from MySQL to HDFS
+$ sqoop import --connect jdbc:mysql://localhost/test_mysql_db --username root --password cloudera --table country_tbl --target-dir /user/cloudera/test_table -m 1
+
+## Importing data from MySQL to HIVE
+$ sqoop import --connect jdbc:mysql://localhost/test_mysql_db --username root --password cloudera --table country_tbl --hive-import --hive-table country -m 1
+##Reviewing data from Hive Table
+$ hive
+hive> show tables;
+hive> select * from country
+
+##Importing data from MySQL to HBase
+$ sqoop import --connect jdbc:mysql://localhost/test_mysql_db --username root --password cloudera --table country_tbl --hbasetable country --column-family hbase_country_cf --hbase-row-key id --hbase-create-table -m 1
+##Reviewing data from Hive Table
+$ hbase shell
+hbase(main):001:0> list
+hbase(main):002:0> scan 'country'
+
+```
+
+
+
 
 
 
