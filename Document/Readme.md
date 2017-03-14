@@ -42,7 +42,7 @@ hive > describe test_tbl;
 hive > drop table test_tbl;
 hive > quit;
 ```
-** Load Data From MovieLens To Hive
+** Load Data From MovieLens To Hive **
 ```
 $ mkdir movielens_dataset
 $ cd movielens_dataset
