@@ -34,9 +34,9 @@ $ hbase shell
 ## LAB 5 HIVE
 ```
 $ hive
-hive> CREATE TABLE TEST_TBL(ID INT,COUNTRY STRING) ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' STORED AS TEXTFILE ;
-hive> SHOW TABLES;
-hive> describe test_tbl;
+hive > CREATE TABLE TEST_TBL(ID INT,COUNTRY STRING) ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' STORED AS TEXTFILE ;
+hive > SHOW TABLES;
+hive > describe test_tbl;
 hive > alter table test_tbl add columns (remarks STRING);
 hive > describe test_tbl;
 hive > drop table test_tbl;
@@ -55,18 +55,22 @@ $ hadoop fs -mkdir /user/cloudera/movielens
 $ hadoop fs -put u.user /user/cloudera/movielens
 $ hadoop fs -ls /user/cloudera/movielens
 $ hive
-hive > create external table users (userid int,age int,gender string,occupation string ,zipcode string) row format delimited fields terminated by '|' stored as textfile location '/user/cloudera/movielens' ;
+hive > create external table users (userid int,age int,gender string,occupation string ,zipcode string) row format delimited      fields terminated by '|' stored as textfile location '/user/cloudera/movielens' ;
 hive > select * from users;
+hive > quit;
 
 ```
 ## LAB 6 IMPALA
 ```
 $ impala-shell
+[quickstart.cloudera:21000] > invalidate metadata;
 [quickstart.cloudera:21000] > select * from users;
+[quickstart.cloudera:21000] > exit;
 
 ```
 ## LAB 7 APACHE FLUME
 ```
+
 $ cd /etc/flume-ng/conf/
 $ sudo rm flume.conf
 $ sudo wget https://github.com/bobbylovemovie/trainbigdata/raw/master/flume/flume.conf
@@ -87,6 +91,7 @@ $ telnet localhost 3030
 ```
 ** Configuring MySQL On Cloudera.Quickstart **
 $ sudo /usr/bin/mysql_secure_installation
+  ********************************************************
   Enter current password for root (enter for none): cloudera
   OK, successfully used password, moving on...
   Set root password? [Y/n] N
@@ -120,7 +125,8 @@ $ sqoop import --connect jdbc:mysql://localhost/test_mysql_db --username root --
 ** Reviewing data from Hive Table **
 $ hive
 hive> show tables;
-hive> select * from country
+hive> select * from country;
+hive> quit;
 
 ** Importing data from MySQL to HBase **
 $ sqoop import --connect jdbc:mysql://localhost/test_mysql_db --username root --password cloudera --table country_tbl --hbasetable country --column-family hbase_country_cf --hbase-row-key id --hbase-create-table -m 1
@@ -138,6 +144,7 @@ scala> sc
 scala> val file = sc.textFile("hdfs:///user/cloudera/input/PG2600.txt")
 scala> val wc = file.flatMap(l => l.split(" ")).map(word =>(word,1)).reduceByKey(_ + _)
 scala> wc.saveAsTextFile("hdfs:///user/cloudera/output/wordcountScala")
+scala> exit;
 
 ** Spark Program in Python: WordCount **
 $ pyspark
@@ -145,11 +152,13 @@ $ pyspark
   >>> file =sc.textFile("hdfs:///user/cloudera/input/PG2600.txt")
   >>> wc = file.flatMap(lambda x: x.split(' ')).map(lambda x:(x,1)).reduceByKey(add)
   >>> wc.saveAsTextFile("hdfs:///user/cloudera/output/wordcountPython")
+  >>> exit()
   
 ** Loading data from MySQL **
+$ cd \
 $ mkdir spark
 $ cd spark
-$wget https://github.com/bobbylovemovie/trainbigdata/raw/master/Spark/mysql-connector-java-5.1.23.jar
+$ wget https://github.com/bobbylovemovie/trainbigdata/raw/master/Spark/mysql-connector-java-5.1.23.jar
 
 $ spark-shell --jars mysql-connector-java-5.1.23.jar
 $ scala> :paste
@@ -167,7 +176,7 @@ myRDD.count
 myRDD.foreach(println)
 
 scala> myRDD.saveAsTextFile("hdfs:///user/cloudera/output/mysqlFromSpark")
-
+scala> exit;
 ```
 
 ## LAB 10 Spark SQL
@@ -175,11 +184,12 @@ scala> myRDD.saveAsTextFile("hdfs:///user/cloudera/output/mysqlFromSpark")
 ** Link Hive Metastore with Spark-Shell **
 $ spark-shell --jars mysql-connector-java-5.1.23.jar
 scala > val sqlContext = new org.apache.spark.sql.hive.HiveContext(sc)
-scala> sqlContext.sql("CREATE TABLE IF NOT EXISTS movie(userid STRING, movieid STRING, rating INT, timestamp STRING) ROW FORMAT
+scala > sqlContext.sql("CREATE TABLE IF NOT EXISTS movie(userid STRING, movieid STRING, rating INT, timestamp STRING) ROW FORMAT
 DELIMITED FIELDS TERMINATED BY '\t' LINES TERMINATED BY '\n'")
 scala> sqlContext.sql("LOAD DATA LOCAL INPATH '/home/cloudera/movielens_dataset/ml-100k/u.data' INTO TABLE movie")
 scala> val result = sqlContext.sql("SELECT * FROM movie")
 scala> result.show()
+scala> exit;
 
 $ sudo cp /usr/lib/hive/conf/hive-site.xml /usr/lib/spark/conf/
 $ spark-shell
@@ -189,6 +199,7 @@ DELIMITED FIELDS TERMINATED BY '\t' LINES TERMINATED BY '\n'")
 scala> sqlContext.sql("LOAD DATA LOCAL INPATH '/home/cloudera/movielens_dataset/ml-100k/u.data' INTO TABLE movie")
 scala> val result = sqlContext.sql("SELECT * FROM movie")
 scala> result.show()
+scala> exit;
 
 ```
 
