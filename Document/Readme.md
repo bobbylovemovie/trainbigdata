@@ -72,20 +72,20 @@ $ sudo rm flume.conf
 $ sudo wget https://github.com/bobbylovemovie/trainbigdata/raw/master/flume/flume.conf
 $ cat flume.conf
 
-## start flume-service
+** start flume-service **
 $ sudo service flume-ng-agent restart
 
-## start flume Agent
+** start flume Agent **
 $ sudo flume-ng agent --conf /etc/flume-ng/conf/ --conf-file /etc/flume-ng/conf/flume.conf --name agent -Dflume.root.logger=INFO,console
 
-## Open New Terminal
+** Open New Terminal **
 $ sudo yum install telnet
 $ telnet localhost 3030
 
 ```
 ## LAB 8 APACHE SQOOP
 ```
-## Configuring MySQL On Cloudera.Quickstart
+** Configuring MySQL On Cloudera.Quickstart **
 $ sudo /usr/bin/mysql_secure_installation
   Enter current password for root (enter for none): cloudera
   OK, successfully used password, moving on...
@@ -96,7 +96,7 @@ $ sudo /usr/bin/mysql_secure_installation
   Reload privilege tables now? [Y/n] Y
   All done!
   
-## Running MySQL
+** Running MySQL **
 $ mysql -uroot -p"cloudera"
 mysql> show databases;
 mysql> CREATE DATABASE test_mysql_db;
@@ -112,25 +112,98 @@ mysql> INSERT INTO country_tbl VALUES(66, 'Thailand');
 mysql> SELECT * FROM country_tbl;
 mysql> exit;
 
-## Importing data from MySQL to HDFS
+** Importing data from MySQL to HDFS **
 $ sqoop import --connect jdbc:mysql://localhost/test_mysql_db --username root --password cloudera --table country_tbl --target-dir /user/cloudera/test_table -m 1
 
-## Importing data from MySQL to HIVE
+** Importing data from MySQL to HIVE **
 $ sqoop import --connect jdbc:mysql://localhost/test_mysql_db --username root --password cloudera --table country_tbl --hive-import --hive-table country -m 1
-##Reviewing data from Hive Table
+** Reviewing data from Hive Table **
 $ hive
 hive> show tables;
 hive> select * from country
 
-##Importing data from MySQL to HBase
+** Importing data from MySQL to HBase **
 $ sqoop import --connect jdbc:mysql://localhost/test_mysql_db --username root --password cloudera --table country_tbl --hbasetable country --column-family hbase_country_cf --hbase-row-key id --hbase-create-table -m 1
-##Reviewing data from Hive Table
+** Reviewing data from Hive Table **
 $ hbase shell
 hbase(main):001:0> list
 hbase(main):002:0> scan 'country'
 
 ```
+## LAB 9 SPARK
+```
+** Start Spark-shell **
+$ spark-shell
+scala> sc
+scala> val file = sc.textFile("hdfs:///user/cloudera/input/PG2600.txt")
+scala> val wc = file.flatMap(l => l.split(" ")).map(word =>(word,1)).reduceByKey(_ + _)
+scala> wc.saveAsTextFile("hdfs:///user/cloudera/output/wordcountScala")
 
+** Spark Program in Python: WordCount **
+$ pyspark
+  >>> from operator import add
+  >>> file =sc.textFile("hdfs:///user/cloudera/input/PG2600.txt")
+  >>> wc = file.flatMap(lambda x: x.split(' ')).map(lambda x:(x,1)).reduceByKey(add)
+  >>> wc.saveAsTextFile("hdfs:///user/cloudera/output/wordcountPython")
+  
+** Loading data from MySQL **
+$ mkdir spark
+$ cd spark
+$wget https://github.com/bobbylovemovie/trainbigdata/raw/master/Spark/mysql-connector-java-5.1.23.jar
+
+$ spark-shell --jars mysql-connector-java-5.1.23.jar
+$ scala> :paste
+val url="jdbc:mysql://localhost:3306/test_mysql_db"
+val username = "root"
+val password = "cloudera"
+import org.apache.spark.rdd.JdbcRDD
+import java.sql.{Connection, DriverManager, ResultSet}
+Class.forName("com.mysql.jdbc.Driver").newInstance
+val myRDD = new JdbcRDD( sc, () =>
+DriverManager.getConnection(url,username,password) ,
+"SELECT * FROM country_tbl LIMIT ?, ?", 0, 5, 2, r =>r.getString("id") + ", " +
+r.getString("country"))
+myRDD.count
+myRDD.foreach(println)
+
+scala> myRDD.saveAsTextFile("hdfs:///user/cloudera/output/mysqlFromSpark")
+
+```
+
+## LAB 10 Spark SQL
+```
+** Link Hive Metastore with Spark-Shell **
+$ spark-shell --jars mysql-connector-java-5.1.23.jar
+scala > val sqlContext = new org.apache.spark.sql.hive.HiveContext(sc)
+scala> sqlContext.sql("CREATE TABLE IF NOT EXISTS movie(userid STRING, movieid STRING, rating INT, timestamp STRING) ROW FORMAT
+DELIMITED FIELDS TERMINATED BY '\t' LINES TERMINATED BY '\n'")
+scala> sqlContext.sql("LOAD DATA LOCAL INPATH '/home/cloudera/movielens_dataset/ml-100k/u.data' INTO TABLE movie")
+scala> val result = sqlContext.sql("SELECT * FROM movie")
+scala> result.show()
+
+$ sudo cp /usr/lib/hive/conf/hive-site.xml /usr/lib/spark/conf/
+$ spark-shell
+scala > val sqlContext = new org.apache.spark.sql.hive.HiveContext(sc)
+scala> sqlContext.sql("CREATE TABLE IF NOT EXISTS movie(userid STRING, movieid STRING, rating INT, timestamp STRING) ROW FORMAT
+DELIMITED FIELDS TERMINATED BY '\t' LINES TERMINATED BY '\n'")
+scala> sqlContext.sql("LOAD DATA LOCAL INPATH '/home/cloudera/movielens_dataset/ml-100k/u.data' INTO TABLE movie")
+scala> val result = sqlContext.sql("SELECT * FROM movie")
+scala> result.show()
+
+```
+
+## LAB 11 Spark Streaming
+```
+$ mkdir spark
+$ cd spark
+$ wget https://github.com/bobbylovemovie/trainbigdata/raw/master/Spark/StreamingWordCount.py
+
+** Run Python Spark **
+$ spark-submit StreamingWordCount.py
+
+** Running the netcat server on another window
+$ nc -lk 9999
+```
 
 
 
