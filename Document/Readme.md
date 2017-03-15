@@ -189,19 +189,19 @@ scala> exit;
 $ spark-shell --jars mysql-connector-java-5.1.23.jar
 scala > val sqlContext = new org.apache.spark.sql.hive.HiveContext(sc)
 scala > sqlContext.sql("CREATE TABLE IF NOT EXISTS movie(userid STRING, movieid STRING, rating INT, timestamp STRING)  ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t' LINES TERMINATED BY '\n'")
-scala> sqlContext.sql("LOAD DATA LOCAL INPATH '/home/cloudera/movielens_dataset/ml-100k/u.data' INTO TABLE movie")
-scala> val result = sqlContext.sql("SELECT * FROM movie")
-scala> result.show()
-scala> exit;
+scala > sqlContext.sql("LOAD DATA LOCAL INPATH '/home/cloudera/movielens_dataset/ml-100k/u.data' INTO TABLE movie")
+scala > val result = sqlContext.sql("SELECT * FROM movie")
+scala > result.show()
+scala > exit;
 
 $ sudo cp /usr/lib/hive/conf/hive-site.xml /usr/lib/spark/conf/
 $ spark-shell
 scala > val sqlContext = new org.apache.spark.sql.hive.HiveContext(sc)
-scala> sqlContext.sql("CREATE TABLE IF NOT EXISTS movie(userid STRING, movieid STRING, rating INT, timestamp STRING)    ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t' LINES TERMINATED BY '\n'")
-scala> sqlContext.sql("LOAD DATA LOCAL INPATH '/home/cloudera/movielens_dataset/ml-100k/u.data' INTO TABLE movie")
-scala> val result = sqlContext.sql("SELECT * FROM movie")
-scala> result.show()
-scala> exit;
+scala > sqlContext.sql("CREATE TABLE IF NOT EXISTS movie(userid STRING, movieid STRING, rating INT, timestamp STRING)    ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t' LINES TERMINATED BY '\n'")
+scala > sqlContext.sql("LOAD DATA LOCAL INPATH '/home/cloudera/movielens_dataset/ml-100k/u.data' INTO TABLE movie")
+scala > val result = sqlContext.sql("SELECT * FROM movie")
+scala > result.show()
+scala > exit;
 
 ```
 
