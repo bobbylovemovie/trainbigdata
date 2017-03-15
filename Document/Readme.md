@@ -132,11 +132,12 @@ hive> select * from country;
 hive> quit;
 
 ** Importing data from MySQL to HBase **
-$ sqoop import --connect jdbc:mysql://localhost/test_mysql_db --username root --password cloudera --table country_tbl --hbasetable country --column-family hbase_country_cf --hbase-row-key id --hbase-create-table -m 1
+$ sqoop import --connect jdbc:mysql://localhost/test_mysql_db --username root --password cloudera --table country_tbl --hbase-table country --column-family hbase_country_cf --hbase-row-key id --hbase-create-table -m 1
 ** Reviewing data from Hive Table **
 $ hbase shell
 hbase(main):001:0> list
 hbase(main):002:0> scan 'country'
+hbase(main):003:0> exit
 
 ```
 ## LAB 9 SPARK
