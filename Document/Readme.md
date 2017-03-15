@@ -29,6 +29,7 @@ $ hbase shell
   hbase(main):007:0> put 'employee','1','professional data:salary','5000'
   
   hbase(main):025:0> put 'employee','2','personal data:name','bobby'
+  hbase(main):026:0> exit
 ```
 
 ## LAB 5 HIVE
@@ -44,6 +45,8 @@ hive > quit;
 ```
 ### Load Data From MovieLens To Hive 
 ```
+$ cd \
+
 $ mkdir movielens_dataset
 $ cd movielens_dataset
 $ wget http://files.grouplens.org/datasets/movielens/ml-100k.zip
