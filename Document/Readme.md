@@ -51,7 +51,8 @@ $ mkdir movielens_dataset
 $ cd movielens_dataset
 $ wget http://files.grouplens.org/datasets/movielens/ml-100k.zip
 or 
-$ cp cp file_input/ml-100k.zip movielens_dataset/
+$ cp file_input/ml-100k.zip .
+
 $ unzip ml-100k.zip
 $ more ml-100k/u.user
 
@@ -80,7 +81,7 @@ $ cd /etc/flume-ng/conf/
 $ sudo rm flume.conf
 $ sudo wget https://github.com/bobbylovemovie/trainbigdata/raw/master/flume/flume.conf
 or
-$ sudo cp file_input/flume.conf /etc/flume-ng/conf/
+$ sudo cp file_input/flume.conf .
 $ cat flume.conf
 
 ** start flume-service **
