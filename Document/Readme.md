@@ -50,6 +50,8 @@ $ cd \
 $ mkdir movielens_dataset
 $ cd movielens_dataset
 $ wget http://files.grouplens.org/datasets/movielens/ml-100k.zip
+or 
+$ cp cp file_input/ml-100k.zip movielens_dataset/
 $ unzip ml-100k.zip
 $ more ml-100k/u.user
 
@@ -77,6 +79,8 @@ $ impala-shell
 $ cd /etc/flume-ng/conf/
 $ sudo rm flume.conf
 $ sudo wget https://github.com/bobbylovemovie/trainbigdata/raw/master/flume/flume.conf
+or
+$ sudo cp file_input/flume.conf /etc/flume-ng/conf/
 $ cat flume.conf
 
 ** start flume-service **
@@ -86,7 +90,11 @@ $ sudo service flume-ng-agent restart
 $ sudo flume-ng agent --conf /etc/flume-ng/conf/ --conf-file /etc/flume-ng/conf/flume.conf --name agent -Dflume.root.logger=INFO,console
 
 ** Open New Terminal **
+*****install from rpm file
+$ sudo rpm -Uvh file_input/telnet-0.17-48.el6.x86_64.rpm
+or
 $ sudo yum install telnet
+
 $ telnet localhost 3030
 
 ```
@@ -163,6 +171,8 @@ $ cd \
 $ mkdir spark
 $ cd spark
 $ wget https://github.com/bobbylovemovie/trainbigdata/raw/master/Spark/mysql-connector-java-5.1.23.jar
+or 
+$ cp file_input/mysql-connector-java-5.1.23.jar .
 
 $ spark-shell --jars mysql-connector-java-5.1.23.jar
 $ scala> :paste
@@ -210,6 +220,8 @@ scala > exit;
 $ mkdir spark
 $ cd spark
 $ wget https://github.com/bobbylovemovie/trainbigdata/raw/master/Spark/StreamingWordCount.py
+or
+$ cp file_input/StreamingWordCount.py .
 
 ** Run Python Spark **
 $ spark-submit StreamingWordCount.py
