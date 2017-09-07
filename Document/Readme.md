@@ -3,6 +3,8 @@
 $ mkdir guest1 
 $ cd guest1 
 $ wget https://github.com/bobbylovemovie/trainbigdata/raw/master/HDFS/PG2600.txt
+or
+$ wget http://s3-ap-southeast-1.amazonaws.com/bobbylovemovie/TrainBigdata/PG2600.txt
 $ hadoop fs -mkdir /user/cloudera/input
 $ hadoop fs -ls /user/cloudera/input
 $ hadoop fs -rm /user/cloudera/input/*
@@ -15,6 +17,8 @@ Open Web Browser : http://quickstart.cloudera:8888
 ```
 $ cd guest1 
 $ wget https://github.com/bobbylovemovie/trainbigdata/raw/master/HDFS/wordcount.jar
+or
+$ wget http://s3-ap-southeast-1.amazonaws.com/bobbylovemovie/TrainBigdata/wordcount.jar
 $ hadoop jar wordcount.jar org.myorg.WordCount /user/cloudera/input/* /user/cloudera/output/wordcount
 ```
 
@@ -81,6 +85,8 @@ $ cd /etc/flume-ng/conf/
 $ sudo rm flume.conf
 $ sudo wget https://github.com/bobbylovemovie/trainbigdata/raw/master/flume/flume.conf
 or
+$ sudo wget http://s3-ap-southeast-1.amazonaws.com/bobbylovemovie/TrainBigdata/flume.conf
+or
 $ sudo cp /home/cloudera/file_input/flume.conf .
 $ cat flume.conf
 
@@ -92,7 +98,9 @@ $ sudo flume-ng agent --conf /etc/flume-ng/conf/ --conf-file /etc/flume-ng/conf/
 
 ** Open New Terminal **
 *****install from rpm file
-$ sudo rpm -Uvh /home/cloudera/file_input/telnet-0.17-48.el6.x86_64.rpm
+$ wget http://s3-ap-southeast-1.amazonaws.com/bobbylovemovie/TrainBigdata/telnet-0.17-48.el6.x86_64.rpm
+$ sudo rpm -Uvh telnet-0.17-48.el6.x86_64.rpm
+##$ sudo rpm -Uvh /home/cloudera/file_input/telnet-0.17-48.el6.x86_64.rpm
 or
 $ sudo yum install telnet
 
@@ -172,7 +180,9 @@ $ cd \
 $ mkdir spark
 $ cd spark
 $ wget https://github.com/bobbylovemovie/trainbigdata/raw/master/Spark/mysql-connector-java-5.1.23.jar
-or 
+or
+$ wget http://s3-ap-southeast-1.amazonaws.com/bobbylovemovie/TrainBigdata/mysql-connector-java-5.1.23.jar
+or
 $ cp /home/cloudera/file_input/mysql-connector-java-5.1.23.jar .
 
 $ spark-shell --jars mysql-connector-java-5.1.23.jar
@@ -221,6 +231,8 @@ scala > exit;
 $ mkdir spark
 $ cd spark
 $ wget https://github.com/bobbylovemovie/trainbigdata/raw/master/Spark/StreamingWordCount.py
+or
+$ wget http://s3-ap-southeast-1.amazonaws.com/bobbylovemovie/TrainBigdata/StreamingWordCount.py
 or
 $ cp /home/cloudera/file_input/StreamingWordCount.py .
 
