@@ -1,5 +1,5 @@
 ## LAB 2 Hadoop File System (HDFS)
-```shell
+```ssh
 $ mkdir guest1 
 $ cd guest1 
 $ wget https://github.com/bobbylovemovie/trainbigdata/raw/master/HDFS/PG2600.txt
