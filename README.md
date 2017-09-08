@@ -2,7 +2,7 @@
 Data Source Training Big Data
 
 ## LAB 2 Hadoop File System (HDFS)
-```
+``` ShellScript
 $ mkdir guest1 
 $ cd guest1 
 $ wget http://s3-ap-southeast-1.amazonaws.com/bobbylovemovie/TrainBigdata/PG2600.txt
