@@ -89,6 +89,9 @@ $ sudo service flume-ng-agent restart
 $ sudo flume-ng agent --conf /etc/flume-ng/conf/ --conf-file /etc/flume-ng/conf/flume.conf --name agent -Dflume.root.logger=INFO,console
 
 ** Open New Terminal **
+** install Telnet from package
+$ sudo yum install telnet
+or
 *****install from rpm file
 $ wget http://s3-ap-southeast-1.amazonaws.com/bobbylovemovie/TrainBigdata/telnet-0.17-48.el6.x86_64.rpm
 $ sudo rpm -Uvh telnet-0.17-48.el6.x86_64.rpm
