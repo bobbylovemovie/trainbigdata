@@ -195,7 +195,11 @@ scala> exit;
 ## LAB 10 Spark SQL
 ```
 ** Link Hive Metastore with Spark-Shell **
+$ cd \
+$ mkdir spark
+$ cd spark
 $ wget http://s3-ap-southeast-1.amazonaws.com/bobbylovemovie/TrainBigdata/mysql-connector-java-5.1.23.jar
+
 $ spark-shell --jars mysql-connector-java-5.1.23.jar
 scala > val sqlContext = new org.apache.spark.sql.hive.HiveContext(sc)
 scala > sqlContext.sql("CREATE TABLE IF NOT EXISTS movie(userid STRING, movieid STRING, rating INT, timestamp STRING)  ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t' LINES TERMINATED BY '\n'")
