@@ -69,7 +69,7 @@ hive > quit;
 ## LAB 6 IMPALA
 ```
 $ impala-shell
-[quickstart.cloudera:21000] > invalidate metadata;
+[quickstart.cloudera:21000] > invalidate metadata users;
 [quickstart.cloudera:21000] > select * from users;
 [quickstart.cloudera:21000] > exit;
 
