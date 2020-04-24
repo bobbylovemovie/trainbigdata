@@ -1,3 +1,7 @@
+## Please Download Cloudera Quickstart VM (Oracle VM VirtualBox)
+https://bit.ly/2V8BArL
+
+
 ## trainbigdata
 Data Source Training Big Data
 
