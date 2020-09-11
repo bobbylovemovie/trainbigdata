@@ -67,6 +67,14 @@ $ hadoop fs -ls /user/cloudera/movielens
 $ hive
 hive > create external table users (userid int,age int,gender string,occupation string ,zipcode string) row format delimited      fields terminated by '|' stored as textfile location '/user/cloudera/movielens' ;
 hive > select * from users;
+
+#Create table with Partition
+hive > create table users_partition (userid int,age int,gender string,occupation string ,zipcode string) partitioned by (year string);
+hive > insert into users_partition partition(year='2019') select * from users;
+hive > select * from users_partition;
+hive > insert into users_partition partition(year='2020') select * from users;
+hive > select * from users_partition;
+hive > select * from users_partition where year='2020';
 hive > quit;
 
 ```
