@@ -9,7 +9,7 @@ Data Source Training Big Data
 ``` ShellScript
 $ mkdir guest1 
 $ cd guest1 
-$ wget http://s3-ap-southeast-1.amazonaws.com/bobbylovemovie/TrainBigdata/PG2600.txt
+$ wget https://bobbytraining.s3.ap-southeast-1.amazonaws.com/PG2600.txt
 $ hadoop fs -mkdir /user/cloudera/input
 $ hadoop fs -ls /user/cloudera/input
 $ hadoop fs -rm /user/cloudera/input/*
