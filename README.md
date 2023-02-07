@@ -21,7 +21,7 @@ Open Web Browser : http://quickstart.cloudera:8888
 ## LAB 3 MapReduce
 ```
 $ cd guest1 
-$ wget http://s3-ap-southeast-1.amazonaws.com/bobbylovemovie/TrainBigdata/wordcount.jar
+$ wget https://bobbytraining.s3.ap-southeast-1.amazonaws.com/wordcount.jar
 $ hadoop jar wordcount.jar org.myorg.WordCount /user/cloudera/input/* /user/cloudera/output/wordcount
 ```
 
@@ -91,7 +91,7 @@ $ impala-shell
 
 $ cd /etc/flume-ng/conf/
 $ sudo rm flume.conf
-$ sudo wget http://s3-ap-southeast-1.amazonaws.com/bobbylovemovie/TrainBigdata/flume.conf
+$ sudo wget https://bobbytraining.s3.ap-southeast-1.amazonaws.com/flume.conf
 $ cat flume.conf
 
 ** start flume-service **
@@ -105,7 +105,7 @@ $ sudo flume-ng agent --conf /etc/flume-ng/conf/ --conf-file /etc/flume-ng/conf/
 $ sudo yum install telnet
 or
 *****install from rpm file
-$ wget http://s3-ap-southeast-1.amazonaws.com/bobbylovemovie/TrainBigdata/telnet-0.17-48.el6.x86_64.rpm
+$ wget https://bobbytraining.s3.ap-southeast-1.amazonaws.com/telnet-0.17-48.el6.x86_64.rpm
 $ sudo rpm -Uvh telnet-0.17-48.el6.x86_64.rpm
 
 $ telnet localhost 3030
@@ -183,7 +183,7 @@ $ pyspark
 $ cd \
 $ mkdir spark
 $ cd spark
-$ wget http://s3-ap-southeast-1.amazonaws.com/bobbylovemovie/TrainBigdata/mysql-connector-java-5.1.23.jar
+$ wget https://bobbytraining.s3.ap-southeast-1.amazonaws.com/mysql-connector-java-5.1.23.jar
 
 $ spark-shell --jars mysql-connector-java-5.1.23.jar
 $ scala> :paste
@@ -210,7 +210,7 @@ scala> exit;
 $ cd \
 $ mkdir spark
 $ cd spark
-$ wget http://s3-ap-southeast-1.amazonaws.com/bobbylovemovie/TrainBigdata/mysql-connector-java-5.1.23.jar
+$ wget https://bobbytraining.s3.ap-southeast-1.amazonaws.com/mysql-connector-java-5.1.23.jar
 
 $ spark-shell --jars mysql-connector-java-5.1.23.jar
 scala > val sqlContext = new org.apache.spark.sql.hive.HiveContext(sc)
@@ -234,7 +234,7 @@ scala > exit;
 ## LAB 11 Spark Streaming
 ```
 $ cd spark
-$ wget http://s3-ap-southeast-1.amazonaws.com/bobbylovemovie/TrainBigdata/StreamingWordCount.py
+$ wget https://bobbytraining.s3.ap-southeast-1.amazonaws.com/StreamingWordCount.py
 
 ** Run Python Spark **
 $ spark-submit StreamingWordCount.py
