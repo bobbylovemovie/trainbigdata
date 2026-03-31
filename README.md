@@ -9,7 +9,7 @@ Data Source Training Big Data
 ``` ShellScript
 $ mkdir guest1 
 $ cd guest1 
-$ wget https://github.com/bobbylovemovie/trainbigdata/raw/master/HDFS/PG2600.txt
+$ wget https://github.com/bobbylovemovie/trainbigdata/raw/master/HDFS/PG2600.txt --no-check-certificate
 $ hadoop fs -mkdir /user/cloudera/input
 $ hadoop fs -ls /user/cloudera/input
 $ hadoop fs -rm /user/cloudera/input/*
