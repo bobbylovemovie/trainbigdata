@@ -21,7 +21,7 @@ Open Web Browser : http://quickstart.cloudera:8888
 ## LAB 3 MapReduce
 ```
 $ cd guest1 
-$ wget https://github.com/bobbylovemovie/trainbigdata/raw/master/HDFS/wordcount.jar
+$ wget https://github.com/bobbylovemovie/trainbigdata/raw/master/HDFS/wordcount.jar --no-check-certificate
 $ hadoop jar wordcount.jar org.myorg.WordCount /user/cloudera/input/* /user/cloudera/output/wordcount
 ```
 
@@ -56,7 +56,7 @@ $ cd \
 
 $ mkdir movielens_dataset
 $ cd movielens_dataset
-$ wget http://files.grouplens.org/datasets/movielens/ml-100k.zip
+$ wget http://files.grouplens.org/datasets/movielens/ml-100k.zip --no-check-certificate
 $ unzip ml-100k.zip
 $ more ml-100k/u.user
 
@@ -91,7 +91,7 @@ $ impala-shell
 
 $ cd /etc/flume-ng/conf/
 $ sudo rm flume.conf
-$ sudo wget https://github.com/bobbylovemovie/trainbigdata/raw/master/flume/flume.conf
+$ sudo wget https://github.com/bobbylovemovie/trainbigdata/raw/master/flume/flume.conf --no-check-certificate
 $ cat flume.conf
 
 ** start flume-service **
@@ -105,7 +105,7 @@ $ sudo flume-ng agent --conf /etc/flume-ng/conf/ --conf-file /etc/flume-ng/conf/
 $ sudo yum install telnet
 or
 *****install from rpm file
-$ wget https://github.com/bobbylovemovie/trainbigdata/raw/master/flume/telnet-0.17-48.el6.x86_64.rpm
+$ wget https://github.com/bobbylovemovie/trainbigdata/raw/master/flume/telnet-0.17-48.el6.x86_64.rpm --no-check-certificate
 $ sudo rpm -Uvh telnet-0.17-48.el6.x86_64.rpm
 
 $ telnet localhost 3030
@@ -183,7 +183,7 @@ $ pyspark
 $ cd \
 $ mkdir spark
 $ cd spark
-$ wget https://github.com/bobbylovemovie/trainbigdata/raw/master/Spark/mysql-connector-java-5.1.23.jar
+$ wget https://github.com/bobbylovemovie/trainbigdata/raw/master/Spark/mysql-connector-java-5.1.23.jar --no-check-certificate
 
 $ spark-shell --jars mysql-connector-java-5.1.23.jar
 $ scala> :paste
@@ -210,7 +210,7 @@ scala> exit;
 $ cd \
 $ mkdir spark
 $ cd spark
-$ wget https://github.com/bobbylovemovie/trainbigdata/raw/master/Spark/mysql-connector-java-5.1.23.jar
+$ wget https://github.com/bobbylovemovie/trainbigdata/raw/master/Spark/mysql-connector-java-5.1.23.jar --no-check-certificate
 
 $ spark-shell --jars mysql-connector-java-5.1.23.jar
 scala > val sqlContext = new org.apache.spark.sql.hive.HiveContext(sc)
@@ -234,7 +234,7 @@ scala > exit;
 ## LAB 11 Spark Streaming
 ```
 $ cd spark
-$ wget https://github.com/bobbylovemovie/trainbigdata/raw/master/Spark/StreamingWordCount.py
+$ wget https://github.com/bobbylovemovie/trainbigdata/raw/master/Spark/StreamingWordCount.py --no-check-certificate
 
 ** Run Python Spark **
 $ spark-submit StreamingWordCount.py
