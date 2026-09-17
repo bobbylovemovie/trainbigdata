@@ -1,0 +1,25 @@
+services:
+  bigdata:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    image: trainbigdata:2026
+    container_name: trainbigdata-2026
+    hostname: bigdata
+    ports:
+      - "${JUPYTER_HOST:-127.0.0.1}:${JUPYTER_PORT:-8888}:8888"
+      - "${HDFS_UI_HOST:-127.0.0.1}:${HDFS_UI_PORT:-9870}:9870"
+      - "${YARN_UI_HOST:-127.0.0.1}:${YARN_UI_PORT:-8088}:8088"
+      - "${HBASE_UI_HOST:-127.0.0.1}:${HBASE_UI_PORT:-16010}:16010"
+      - "${HIVE_HOST:-127.0.0.1}:${HIVE_PORT:-10000}:10000"
+    volumes:
+      - hadoop_data:/opt/hadoop/data
+      - mysql_data:/var/lib/mysql
+      - student_home:/home/student
+    mem_limit: ${MEM_LIMIT:-8g}
+    shm_size: 512m
+
+volumes:
+  hadoop_data:
+  mysql_data:
+  student_home:

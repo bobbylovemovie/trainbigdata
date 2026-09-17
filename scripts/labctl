@@ -1,0 +1,106 @@
+#!/bin/bash
+# labctl - simple service control for the trainbigdata:2026 sandbox.
+# Wraps supervisorctl so students don't have to remember 10 process names.
+set -uo pipefail
+
+SVC="supervisorctl"
+
+group_programs() {
+  case "$1" in
+    core)    echo "namenode datanode resourcemanager nodemanager" ;;
+    hbase)   echo "hbase-zookeeper hbase-master hbase-regionserver" ;;
+    hive)    echo "hive-metastore hive-server2" ;;
+    jupyter) echo "jupyterlab" ;;
+    mariadb) echo "mariadb" ;;
+    spark)   echo "" ;; # spark-shell/pyspark/spark-submit are client tools, not daemons
+    all)     echo "mariadb namenode datanode resourcemanager nodemanager hbase-zookeeper hbase-master hbase-regionserver hive-metastore hive-server2 jupyterlab" ;;
+    *)       echo "" ;;
+  esac
+}
+
+usage() {
+  cat <<EOF
+Usage:
+  labctl status                 show status of every service
+  labctl start <group>          start a service group
+  labctl stop <group>           stop a service group
+
+Groups: core hbase hive jupyter mariadb spark all
+  core = HDFS + YARN (start this first)
+EOF
+}
+
+state_of() {
+  # returns RUNNING / STOPPED / ... for a supervisor program name
+  $SVC status "$1" 2>/dev/null | awk '{print $2}'
+}
+
+group_state() {
+  local progs states
+  progs=$(group_programs "$1")
+  [ -z "$progs" ] && { echo "N/A"; return; }
+  states=$(for p in $progs; do state_of "$p"; done | sort -u)
+  if [ "$states" = "RUNNING" ]; then
+    echo "RUNNING"
+  elif echo "$states" | grep -qv STOPPED; then
+    echo "PARTIAL/$(echo $states | tr '\n' ',')"
+  else
+    echo "STOPPED"
+  fi
+}
+
+cmd_status() {
+  printf "%-14s %s\n" "HDFS" "$(group_state core)"
+  printf "%-14s %s\n" "YARN" "$(group_state core)"
+  printf "%-14s %s\n" "HBase" "$(group_state hbase)"
+  printf "%-14s %s\n" "Hive" "$(group_state hive)"
+  printf "%-14s %s\n" "MariaDB" "$(group_state mariadb)"
+  printf "%-14s %s\n" "JupyterLab" "$(group_state jupyter)"
+  echo
+  echo "(spark-shell / pyspark / spark-submit are client tools -- no daemon to start)"
+}
+
+cmd_start() {
+  local group=$1
+  if [ "$group" = "spark" ]; then
+    echo "Spark has no daemon in this sandbox. Make sure 'core' is running, then run pyspark/spark-shell/spark-submit directly."
+    return 0
+  fi
+  local progs
+  progs=$(group_programs "$group")
+  if [ -z "$progs" ]; then
+    echo "Unknown group: $group" >&2
+    usage >&2
+    return 1
+  fi
+  if [ "$group" = "hive" ]; then
+    $SVC start mariadb >/dev/null 2>&1
+  fi
+  if [ "$group" = "hbase" ]; then
+    # ZooKeeper must be listening before master/regionserver try to register.
+    $SVC start hbase-zookeeper >/dev/null 2>&1
+    sleep 3
+  fi
+  # shellcheck disable=SC2086
+  $SVC start $progs
+}
+
+cmd_stop() {
+  local group=$1
+  local progs
+  progs=$(group_programs "$group")
+  if [ -z "$progs" ]; then
+    echo "Unknown group: $group" >&2
+    usage >&2
+    return 1
+  fi
+  # shellcheck disable=SC2086
+  $SVC stop $progs
+}
+
+case "${1:-}" in
+  status) cmd_status ;;
+  start)  shift; cmd_start "${1:-}" ;;
+  stop)   shift; cmd_stop "${1:-}" ;;
+  *)      usage; exit 1 ;;
+esac

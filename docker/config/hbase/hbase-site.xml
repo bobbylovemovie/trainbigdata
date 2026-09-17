@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<configuration>
+  <property>
+    <name>hbase.rootdir</name>
+    <value>hdfs://localhost:9000/hbase</value>
+  </property>
+  <property>
+    <name>hbase.cluster.distributed</name>
+    <value>true</value>
+  </property>
+  <property>
+    <name>hbase.zookeeper.property.dataDir</name>
+    <value>/opt/hadoop/data/zookeeper</value>
+  </property>
+  <property>
+    <name>hbase.master.info.bindAddress</name>
+    <value>0.0.0.0</value>
+  </property>
+  <property>
+    <name>hbase.wal.provider</name>
+    <value>filesystem</value>
+    <description>
+      The default asyncfs WAL provider uses reflection against Hadoop's
+      internal protobuf classes to work across Hadoop versions, and that
+      reflection breaks between this exact Hadoop 3.3.6 / HBase 2.5.15 pairing
+      (IllegalArgumentException: object is not an instance of declaring class,
+      in FanOutOneBlockAsyncDFSOutputHelper/ProtobufDecoder). The classic
+      synchronous filesystem provider avoids that code path entirely.
+    </description>
+  </property>
+</configuration>
