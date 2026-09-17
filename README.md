@@ -1,5 +1,7 @@
 # trainbigdata:2026
 
+**English** | [ภาษาไทย](README.th.md)
+
 A single-node, Docker-based Big Data sandbox for learning Hadoop-ecosystem
 concepts, replacing the old Cloudera QuickStart VM (VirtualBox).
 
