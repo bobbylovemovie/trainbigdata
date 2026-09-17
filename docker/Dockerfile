@@ -97,22 +97,22 @@ COPY scripts/labctl /usr/local/bin/labctl
 COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
 COPY docker/bootstrap-hdfs.sh /usr/local/bin/bootstrap-hdfs.sh
 COPY scripts/smoke-test.sh /usr/local/bin/smoke-test.sh
-COPY datasets/ /opt/lab-datasets/
+COPY datasets/ /course/datasets/
 # Canonical lab files, OUTSIDE the /home/student volume so they stay in sync
 # with the image on every rebuild. entrypoint.sh seeds ~/labs from here into
 # the (persistent) student home on first boot only; smoke-test.sh always
 # reads from here directly so it tests the image, not a stale seeded copy.
-COPY labs/ /opt/labs/
+COPY labs/ /course/labs/
 
 # Precompile the modern WordCount example (see labs/03-mapreduce/README.md
 # for why the original org.myorg.WordCount jar was not reused).
 RUN mkdir -p /tmp/wc-classes \
-    && javac -classpath "$(hadoop classpath)" -d /tmp/wc-classes /opt/labs/03-mapreduce/WordCount.java \
-    && jar -cf /opt/labs/03-mapreduce/wordcount.jar -C /tmp/wc-classes . \
+    && javac -classpath "$(hadoop classpath)" -d /tmp/wc-classes /course/labs/03-mapreduce/WordCount.java \
+    && jar -cf /course/labs/03-mapreduce/wordcount.jar -C /tmp/wc-classes . \
     && rm -rf /tmp/wc-classes
 
 RUN chmod +x /usr/local/bin/labctl /usr/local/bin/entrypoint.sh /usr/local/bin/bootstrap-hdfs.sh /usr/local/bin/smoke-test.sh \
-    && chown -R student:student /opt/labs /opt/lab-datasets
+    && chown -R student:student /course/labs /course/datasets
 
 EXPOSE 8888 9870 8088 16010 10000
 

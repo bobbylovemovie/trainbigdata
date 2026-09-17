@@ -30,7 +30,7 @@ DROP TABLE test_tbl;
 
 ```bash
 mkdir -p ~/movielens_dataset && cd ~/movielens_dataset
-unzip /opt/lab-datasets/ml-100k.zip
+unzip /course/datasets/ml-100k.zip
 more ml-100k/u.user
 
 hadoop fs -mkdir -p /user/student/movielens

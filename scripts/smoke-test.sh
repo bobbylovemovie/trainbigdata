@@ -55,7 +55,7 @@ check "YARN"              bash -c 'yarn node -list -all'
 check "MapReduce WordCount" bash -c '
   set -e
   hadoop fs -rm -r -f /tmp/smoketest/mrout >/dev/null
-  hadoop jar /opt/labs/03-mapreduce/wordcount.jar WordCount \
+  hadoop jar /course/labs/03-mapreduce/wordcount.jar WordCount \
       /tmp/smoketest/in.txt /tmp/smoketest/mrout
   hadoop fs -cat /tmp/smoketest/mrout/part-r-00000 | grep -q .
 '
@@ -103,7 +103,7 @@ PYEOF
   spark-submit /tmp/smoke-pyspark.py 2>/dev/null | grep -q "^10$"
 '
 check "Spark reading HDFS" bash -c '
-  spark-submit /opt/labs/09-pyspark/wordcount.py hdfs:///tmp/smoketest/in.txt 2>/dev/null | grep -q .
+  spark-submit /course/labs/09-pyspark/wordcount.py hdfs:///tmp/smoketest/in.txt 2>/dev/null | grep -q .
 '
 
 check "MariaDB"            bash -c 'mysqladmin ping --silent'
@@ -117,7 +117,7 @@ check "JDBC database -> Spark" bash -c '
     INSERT INTO smoketest_db.smoketest_tbl VALUES (1, \"Testland\");
   "
   hadoop fs -rm -r -f /tmp/smoketest/jdbcout >/dev/null
-  spark-submit --jars /opt/mariadb-java-client.jar /opt/labs/08-rdbms-ingestion/jdbc_to_hdfs.py \
+  spark-submit --jars /opt/mariadb-java-client.jar /course/labs/08-rdbms-ingestion/jdbc_to_hdfs.py \
       --db smoketest_db --table smoketest_tbl --output hdfs:///tmp/smoketest/jdbcout
   hadoop fs -ls /tmp/smoketest/jdbcout | grep -q parquet
 '

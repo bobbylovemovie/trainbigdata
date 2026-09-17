@@ -1,6 +1,9 @@
 #!/bin/bash
-# Wipes all lab state (HDFS, HBase, Hive, MariaDB, student home) and starts
-# a clean container. Run from the repo root.
+# FULL reset: wipes all lab state (HDFS, HBase, Hive, MariaDB, student home)
+# and starts a clean container. Run from the repo root.
+#
+# If something is just stuck/misbehaving, try the non-destructive
+# ./scripts/restart-lab.sh first -- it keeps all your data.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 

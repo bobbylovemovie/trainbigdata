@@ -7,37 +7,57 @@ concepts, replacing the old Cloudera QuickStart VM (VirtualBox).
 Cloudera QuickStart VM  ->  Modern Docker Big Data Sandbox
 ```
 
-This is a **single-node educational sandbox**, not a production
-architecture, and not a multi-user platform (no JupyterHub, no auth,
-no Kubernetes -- see "Next steps" at the bottom).
+This is a **single-node educational sandbox** students run locally, one
+container per laptop -- not a production architecture, and not a
+multi-user platform (no JupyterHub, no VPS, no auth, no Kubernetes --
+see "Next step toward multi-user" at the bottom).
 
 ## Requirements
 
-- Docker Desktop, or Docker Engine + Docker Compose plugin
-- No VirtualBox. No Cloudera VM.
-- 4 CPU / 8 GB RAM given to Docker minimum, 6 CPU / 12-16 GB preferred
-  (see "Resource usage" below)
+- Docker Desktop (Windows/macOS), or Docker Engine + Compose plugin (Linux)
+- Git
+- No VirtualBox. No Cloudera VM. No cloud account.
+- 8 GB laptop RAM minimum, 16 GB preferred (see "Resource usage" below)
 
 ## Quick start
 
 ```bash
 git clone https://github.com/bobbylovemovie/trainbigdata.git
 cd trainbigdata
+
+docker compose pull
 docker compose up -d
-docker compose exec bigdata bash
 ```
 
-Inside the container:
+`pull` downloads the pre-built course image -- nothing is compiled or
+installed on your machine. Then check you're ready:
+
+```bash
+./scripts/student-check.sh
+```
+
+(Windows without Git Bash/WSL: `.\scripts\student-check.ps1` in PowerShell.)
+
+Enter the lab:
+
+```bash
+docker compose exec bigdata bash
+```
 
 ```bash
 labctl status
 ```
 
-Then start with `labs/02-hdfs/README.md` (also readable at
-`~/labs/02-hdfs/README.md` inside the container, or in the JupyterLab file
-browser).
+Full walkthrough: `labs/01-setup/README.md`. Then continue with
+`labs/02-hdfs/README.md` (also readable at `~/labs/02-hdfs/README.md`
+inside the container, or in the JupyterLab file browser).
 
-JupyterLab (browser workspace, with a terminal): http://localhost:8888
+From here on, every lab command is a Linux command run **inside the
+container** -- identical whether your laptop is Windows, macOS, or Linux.
+
+JupyterLab (browser workspace, with a terminal): http://localhost:8888 --
+a convenience, not required; every lab in this course also works entirely
+from `docker compose exec bigdata bash`.
 
 ## Architecture
 
@@ -138,6 +158,7 @@ only for labs 4, 5, 8, 10.
 
 | # | Lab | Notes |
 |---|---|---|
+| 01 | Setup | install, pull, `student-check`, enter the container |
 | 02 | HDFS | `/user/student`, not `/user/cloudera` |
 | 03 | MapReduce | modern `WordCount` (see migration guide) |
 | 04 | HBase | column families renamed `personal_data`/`professional_data` |
@@ -160,29 +181,148 @@ Spark Streaming (DStream)     ->  Structured Streaming
 Impala                        ->  deprecated/optional (Trino noted as a future option)
 ```
 
+## Repository vs. Docker image
+
+Two different things update independently:
+
+```text
+GitHub repository            Docker image
+  course instructions          Java, Hadoop, HBase, Hive, Spark, Python
+  labs/, datasets/               MariaDB, all runtime configuration
+  docker-compose.yml, scripts
+
+  git pull                     docker compose pull
+```
+
+- **`git pull`** gets updated lab instructions and datasets.
+- **`docker compose pull`** gets an updated runtime, if the instructor
+  published one. Then `docker compose up -d` to switch to it.
+
+You will not usually need to do both at once.
+
+## Versioning
+
+`docker-compose.yml` points at a specific tag, not a moving `latest`:
+
+```yaml
+image: ${TRAINBIGDATA_IMAGE:-ghcr.io/bobbylovemovie/trainbigdata:2026}
+```
+
+`:2026` is the tag a running class is expected to use; it only moves when
+the instructor deliberately publishes an update and the class is told to
+`docker compose pull`. If a specific class run needs to stay pinned to an
+exact build even as `:2026` moves forward, point `.env`'s
+`TRAINBIGDATA_IMAGE` at a dated/numbered tag instead (e.g.
+`ghcr.io/bobbylovemovie/trainbigdata:2026.1`) -- see
+`.github/workflows/build-image.yml` for how those get published.
+
+## Updating during the semester
+
+```text
+Instructor edits lab docs -> git push -> student: git pull
+Instructor publishes a new image -> student: docker compose pull && docker compose up -d
+```
+
+Students never need to reinstall or rebuild anything themselves.
+
+## Building the image yourself (maintainers only)
+
+Students should never need this. The default `docker-compose.yml` only
+pulls the pre-built image; building it locally is a separate, explicit
+step using the dev override:
+
+```bash
+docker compose -f docker-compose.yml -f docker-compose.dev.yml build
+docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
+```
+
+`.github/workflows/build-image.yml` builds and publishes the real image
+for `linux/amd64` + `linux/arm64` via Buildx on push to `master` (tag
+`:2026`) and on pushed `v2026.*` tags (a pinned numbered tag) -- see that
+file for exact triggers and tag rules.
+
+## Instructor demonstration
+
+The instructor uses the exact same image students do -- there is no
+separate "instructor build." What you demo in class is guaranteed to match
+what's on every student's laptop.
+
+## Pre-class verification
+
+Send this to students before the session:
+
+```text
+Before class:
+1. Install Docker Desktop
+2. Install Git
+3. git clone https://github.com/bobbylovemovie/trainbigdata.git
+4. cd trainbigdata && docker compose pull && docker compose up -d
+5. ./scripts/student-check.sh   (or .\scripts\student-check.ps1 on Windows)
+6. Send a screenshot showing "Environment READY"
+```
+
+This surfaces install problems (corporate firewalls, low disk space, old
+Docker versions, WSL2 not enabled) before class time, not during it.
+
+## Windows compatibility
+
+Docker Desktop on Windows is a first-class target. To keep behavior
+identical across Windows/macOS/Linux:
+
+- **Every lab command runs inside the Linux container**, entered via
+  `docker compose exec bigdata bash`, never assumed to run on the host
+  shell. This sidesteps CRLF/LF, path-separator, and permission
+  differences entirely once you're inside.
+- The one host-side check (`student-check`) is provided both ways:
+  `scripts/student-check.sh` (bash -- Git Bash/WSL/macOS/Linux) and
+  `scripts/student-check.ps1` (native PowerShell, no WSL required).
+- `.gitattributes` forces LF line endings on shell scripts and configs
+  regardless of the cloning machine's `core.autocrlf` setting, since a
+  Windows default of `autocrlf=true` would otherwise corrupt shebang
+  lines (`#!/bin/bash\r` fails to execute).
+- Course paths inside the container are fixed (`/course/labs`,
+  `/course/datasets`, `/home/student`) -- nothing in the lab instructions
+  ever references a host path like `C:\Users\...` or `/Users/you/...`.
+
 ## Persistent storage & reset
 
 Named volumes persist `/opt/hadoop/data` (HDFS), `/var/lib/mysql` (MariaDB
 + Hive metastore) and `/home/student` (your files, notebooks, lab copies)
-across `docker compose down` / `up -d`.
+across `docker compose down` / `up -d`, and across an ordinary
+`docker compose restart`.
 
-To wipe everything and start clean:
-
-```bash
-./scripts/reset-lab.sh
-# or, equivalently and without the confirmation prompt:
-docker compose down -v && docker compose up -d
-```
-
-## Smoke tests
+Two levels of reset, for when something breaks mid-lab:
 
 ```bash
-./scripts/smoke-test.sh
+./scripts/restart-lab.sh   # soft: restarts services, keeps all your data
+./scripts/reset-lab.sh     # full: wipes HDFS/HBase/Hive/MariaDB/home, asks first
 ```
 
-Checks Java, Hadoop, HDFS (NameNode + put/get), YARN, MapReduce WordCount,
-HBase, HiveServer2 + Beeline, Spark, PySpark, Spark-reads-HDFS, MariaDB,
-JDBC-to-Spark ingestion, and JupyterLab. Exits non-zero if anything fails.
+`reset-lab.sh` is equivalent to `docker compose down -v && docker compose
+up -d` but asks for confirmation first, since it deletes real student work.
+
+Convenience wrappers around the canonical `docker compose` commands (not
+required, just shorter to type): `scripts/start.sh`, `scripts/stop.sh`.
+
+## Testing the environment
+
+Two different scripts, for two different audiences:
+
+```bash
+./scripts/student-check.sh    # student-facing: "am I ready for lab?"
+./scripts/smoke-test.sh       # developer-facing: deep end-to-end test
+```
+
+`student-check.sh` is fast and friendly -- Docker installed/running, image
+present, container running, Hadoop/HDFS/YARN/Java/Spark responding -- with
+one plain-English fix suggested per failure, no stack traces. This is what
+students (and instructors, before class) run.
+
+`smoke-test.sh` is the real correctness test: Java, Hadoop, HDFS (NameNode
++ put/get), YARN, MapReduce WordCount, HBase, HiveServer2 + Beeline, Spark,
+PySpark, Spark-reads-HDFS, MariaDB, JDBC-to-Spark ingestion, and JupyterLab.
+Exits non-zero if anything fails. Run this after changing the image, not
+before every lab session.
 
 ## Resource usage
 
@@ -200,7 +340,24 @@ to the VM), idle after startup:
 | `core` + MariaDB + JupyterLab (default boot) | ~2.2 GB |
 | everything running (`labctl start all`) | ~3.4 GB |
 
-Image size: ~2.9 GB.
+Image size: ~2.9 GB. Everything comfortably fits in the `MEM_LIMIT=6g`
+default -- a laptop with 8 GB total RAM is enough, 16 GB is comfortable.
+
+**Only run what the current lab needs.** Nothing forces HBase or Hive to
+stay running once you're done with them:
+
+| Lab | Start | Stop when done |
+|---|---|---|
+| 02 HDFS, 03 MapReduce, 09 PySpark, 10 Spark SQL*, 11 Streaming | `core` (default) | -- |
+| 04 HBase | `labctl start hbase` | `labctl stop hbase` |
+| 05 Hive, 08 RDBMS ingestion | `labctl start hive` | `labctl stop hive` |
+
+\* labs/10's optional Hive-integration example needs `hive` running too.
+
+```bash
+docker compose exec bigdata labctl stop hbase
+docker compose exec bigdata labctl stop hive
+```
 
 ## Security
 
@@ -215,10 +372,18 @@ multi-tenant or internet-facing use.
 
 ## Compatibility
 
-Built and tested on **macOS (Apple Silicon / arm64)**. The image also
-builds for **linux/amd64** (base image and all installed components are
-multi-arch), but amd64 has not been run end-to-end for this phase --
-report issues if you hit any.
+Built and **fully tested end to end** (build + 15-check smoke test, twice
+from a clean volume state) on **macOS (Apple Silicon / arm64)**.
+
+`.github/workflows/build-image.yml` builds `linux/amd64` in addition to
+`linux/arm64` via Buildx/QEMU. All installed components (Ubuntu 22.04 base,
+OpenJDK 8, Hadoop, Hive, HBase, Spark, MariaDB, Python/JupyterLab) publish
+official amd64 builds, so it should work -- but as of this writing that
+workflow has not yet completed a real run, so **amd64 is not independently
+confirmed working**. Don't take that as tested until a workflow run and a
+smoke test on real amd64 hardware (or CI) confirms it; report issues if you
+hit any. Windows Docker Desktop (which runs Linux containers, usually
+amd64) inherits this same untested status.
 
 **Known arm64 limitation:** Hadoop's official binary tarball ships prebuilt
 native libraries (`libhadoop.so`) for amd64 only. On arm64 the JVM falls
@@ -226,7 +391,25 @@ back to Java implementations of compression/CRC -- fully functional for
 this course's labs, just somewhat slower on large data. Not an issue at the
 scale used here (a few MB per lab).
 
+**Known CI limitation:** cross-building `linux/arm64` under QEMU emulation
+on a `linux/amd64` GitHub-hosted runner is slow for a stack this size (this
+session's own arm64 build, native, took 15-75+ minutes depending on Apache
+mirror load). If the Actions workflow times out, the practical fix is
+splitting it into a build matrix across native `ubuntu-latest` (amd64) and
+GitHub's native `ubuntu-24.04-arm` runners, then merging into one manifest
+with `docker buildx imagetools create` -- not implemented yet since it adds
+real complexity that isn't worth taking on before the QEMU path is even
+confirmed to fail.
+
 ## Known limitations / intentionally left as legacy
+
+- **`ghcr.io/bobbylovemovie/trainbigdata:2026` has not been published yet.**
+  `docker-compose.yml` points at it as the default per the "students only
+  pull" design, but until `.github/workflows/build-image.yml` actually runs
+  (push to `master`, or `workflow_dispatch`) and GHCR package visibility is
+  set to public, `docker compose pull` will fail with "not found" / "denied".
+  Until then, use the dev override to build locally instead:
+  `docker compose -f docker-compose.yml -f docker-compose.dev.yml build && ... up -d`.
 
 - **Impala**: not installed (see labs/06). Trino noted as a possible future
   addition, not implemented.

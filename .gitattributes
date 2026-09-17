@@ -1,0 +1,16 @@
+# Force LF regardless of the cloning machine's git config (Windows'
+# core.autocrlf=true would otherwise corrupt shebang lines on checkout).
+*.sh text eol=lf
+*.py text eol=lf
+*.rb text eol=lf
+*.conf text eol=lf
+*.xml text eol=lf
+Dockerfile text eol=lf
+labctl text eol=lf
+
+# Binary/data files: never touch line endings.
+*.jar binary
+*.zip binary
+*.parq binary
+*.rpm binary
+*.txt -text

@@ -1,0 +1,15 @@
+# Development override: build the image locally instead of pulling it.
+#
+# Students should never need this file -- normal use is
+# `docker compose pull && docker compose up -d`, which uses the pre-built
+# image from GitHub Container Registry (see docker-compose.yml).
+#
+# Instructors/maintainers changing the Dockerfile, configs, or labs use:
+#   docker compose -f docker-compose.yml -f docker-compose.dev.yml build
+#   docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
+services:
+  bigdata:
+    image: trainbigdata:2026-dev
+    build:
+      context: .
+      dockerfile: docker/Dockerfile

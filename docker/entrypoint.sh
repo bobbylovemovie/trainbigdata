@@ -12,7 +12,7 @@ chown mysql:mysql /run/mysqld
 
 if [ ! -d /home/student/labs ]; then
   echo "[entrypoint] seeding ~/labs from the image (first run for this student-home volume)"
-  cp -r /opt/labs /home/student/labs
+  cp -r /course/labs /home/student/labs
   chown -R student:student /home/student/labs
 fi
 

@@ -3,7 +3,7 @@
 Old Cloudera lab used `/user/cloudera`. This sandbox uses `/user/student`.
 
 ```bash
-cp /opt/lab-datasets/PG2600.txt ~/PG2600.txt
+cp /course/datasets/PG2600.txt ~/PG2600.txt
 
 hadoop fs -mkdir -p /user/student/input
 hadoop fs -put PG2600.txt /user/student/input/

@@ -9,7 +9,7 @@ image build.
 
 ```bash
 hadoop fs -mkdir -p /user/student/input
-hadoop fs -put -f /opt/lab-datasets/PG2600.txt /user/student/input/
+hadoop fs -put -f /course/datasets/PG2600.txt /user/student/input/
 
 hadoop jar ~/labs/03-mapreduce/wordcount.jar WordCount \
     /user/student/input /user/student/output/wordcount

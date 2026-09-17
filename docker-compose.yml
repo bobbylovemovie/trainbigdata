@@ -1,9 +1,6 @@
 services:
   bigdata:
-    build:
-      context: .
-      dockerfile: docker/Dockerfile
-    image: trainbigdata:2026
+    image: ${TRAINBIGDATA_IMAGE:-ghcr.io/bobbylovemovie/trainbigdata:2026}
     container_name: trainbigdata-2026
     hostname: bigdata
     ports:
@@ -16,7 +13,7 @@ services:
       - hadoop_data:/opt/hadoop/data
       - mysql_data:/var/lib/mysql
       - student_home:/home/student
-    mem_limit: ${MEM_LIMIT:-8g}
+    mem_limit: ${MEM_LIMIT:-6g}
     shm_size: 512m
 
 volumes:
