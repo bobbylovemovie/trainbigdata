@@ -107,7 +107,7 @@ RUN pip3 install --no-cache-dir --upgrade pip \
 # --- student user + directories ---------------------------------------------
 RUN useradd -m -s /bin/bash student \
     && echo "student:student" | chpasswd \
-    && mkdir -p /opt/hadoop/data/nn /opt/hadoop/data/dn /opt/hadoop/data/tmp /opt/hadoop/data/pid /opt/hadoop/data/logs /opt/hadoop/data/zookeeper /opt/hadoop/data/kafka /var/log/lab /home/student/notebooks \
+    && mkdir -p /opt/hadoop/data/nn /opt/hadoop/data/dn /opt/hadoop/data/tmp /opt/hadoop/data/pid /opt/hadoop/data/logs /opt/hadoop/data/zookeeper /opt/hadoop/data/kafka-logs /var/log/lab /home/student/notebooks \
     && chown -R student:student ${HADOOP_HOME} ${HIVE_HOME} ${HBASE_HOME} ${SPARK_HOME} ${FLUME_HOME} ${KAFKA_HOME} /var/log/lab /home/student
 
 COPY docker/config/hadoop/ ${HADOOP_CONF_DIR}/

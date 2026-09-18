@@ -42,6 +42,35 @@ This sandbox runs Kafka in **KRaft mode** -- Kafka manages its own
 metadata internally, no separate ZooKeeper process needed (this is the
 modern default since Kafka 3.x, and the only mode Kafka 4.x supports).
 
+## Important: Kafka does not store data in HDFS
+
+Easy to assume otherwise in a course built around Hadoop, so to be
+explicit: **Kafka has its own storage layer.** It writes plain log-segment
+files straight to local disk -- there is no NameNode, no DataNode, no
+`hdfs://` URI anywhere in Kafka itself. Verify this after Step 3 below, once
+you've produced a few messages:
+
+```bash
+ls /opt/hadoop/data/kafka-logs/student-events-0/
+hadoop fs -ls /user/student/
+```
+
+The first command shows real `.log`/`.index` files sitting on the
+container's local filesystem -- that's where your messages actually live.
+The second command (HDFS) shows nothing related to Kafka at all, because
+there's nothing there to show. (This sandbox's Kafka data happens to sit
+on the same persisted Docker volume as HDFS's own data, purely so the
+image doesn't need a second named volume -- that's a deployment
+convenience, not a storage relationship. The two systems don't know
+about each other.)
+
+If you *do* want Kafka data to end up in HDFS, that's not automatic --
+it's a separate, deliberate pipeline (e.g. Kafka Connect's HDFS sink
+connector, or a Spark Structured Streaming job reading from Kafka and
+writing to HDFS, extending what Lab 11 does with a raw socket). Kafka's
+job is the durable log in between; getting data into HDFS is always a
+second, explicit step.
+
 ## Step 1: Start Kafka
 
 ```bash
