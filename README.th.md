@@ -94,6 +94,19 @@ daemon ทั้งหมดรันอยู่ใน container เดีย�
 รันตรง ๆ เป็น foreground supervisor program ซึ่งง่ายกว่าและเข้ากับ
 container ได้ดีกว่าวิธีเดิมแบบ `start-dfs.sh`/SSH
 
+### Web UI ที่มีให้ใช้
+
+| UI | URL | ใช้ทำอะไร |
+|---|---|---|
+| HDFS NameNode | http://localhost:9870 | เมนู **Utilities -> Browse the file system** -- ตัว browse โฟลเดอร์ HDFS แบบมีหน้าตา ใช้สอนได้ดีว่า Hive table คือโฟลเดอร์ธรรมดา (ดู labs/05) ไม่ต้องมี tool แยก (Hue ฯลฯ) เลย |
+| YARN ResourceManager | http://localhost:8088 | ดูงาน MapReduce/Spark: ความคืบหน้า, log, เวลาที่ใช้ |
+| HBase Master | http://localhost:16010 | ตาราง, region, สถานะ cluster |
+
+ไม่ต้อง login เลยสักตัว โดยตั้งใจไม่ใส่เครื่องมือ query/dashboard (Hue,
+Superset, ...) มาให้ เพราะ JupyterLab ครอบคลุมงาน query และ viz แบบ ad
+hoc อยู่แล้ว (`spark.sql(...).toPandas().plot(...)`) การเพิ่ม BI tool
+จริงจังเป็นสิ่งที่ทำเพิ่มได้ในอนาคต แต่ไม่จำเป็นสำหรับเฟสนี้
+
 ## เวอร์ชันที่เลือกใช้
 
 เลือกชุดเวอร์ชันที่เข้ากันได้และเสถียร (อิงจากเวอร์ชันที่ Apache Bigtop

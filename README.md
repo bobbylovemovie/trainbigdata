@@ -92,6 +92,20 @@ SSH between "nodes" -- pseudo-distributed Hadoop/HBase/Hive processes are
 started directly as foreground supervisor programs, which is simpler and
 more container-native than the classic `start-dfs.sh`/SSH approach.
 
+### Web UIs
+
+| UI | URL | Useful for |
+|---|---|---|
+| HDFS NameNode | http://localhost:9870 | **Utilities -> Browse the file system** -- a visual folder browser for HDFS. Great for showing that a Hive table is just a folder (see labs/05) -- no separate tool (Hue, etc.) needed. |
+| YARN ResourceManager | http://localhost:8088 | Inspect MapReduce/Spark jobs: task progress, logs, timing |
+| HBase Master | http://localhost:16010 | Tables, regions, cluster status |
+
+None of these need a login. There's no query/dashboard tool (Hue,
+Superset, ...) included by design -- JupyterLab already covers ad hoc
+querying and visualization (`spark.sql(...).toPandas().plot(...)`); adding
+a dedicated BI tool is a reasonable future addition, not something this
+phase needed.
+
 ## Selected versions
 
 Chosen for a stable, mutually-compatible set (informed by the versions
