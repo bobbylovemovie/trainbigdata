@@ -378,18 +378,21 @@ docker compose exec bigdata labctl stop hive
 
 ## ความเข้ากันได้ของ platform
 
-Build และ **ทดสอบ end-to-end ครบถ้วน** (build + smoke test 15 จุด สองรอบ
-จาก volume ที่ล้างใหม่) บน **macOS (Apple Silicon / arm64)**
+Build และ **ทดสอบ end-to-end ครบถ้วน** (build + smoke test 15 จุด หลายรอบ
+จาก volume ที่ล้างใหม่ รวมถึง pull และรัน image จริงที่ publish แล้วคือ
+`ghcr.io/bobbylovemovie/trainbigdata:2026`) บน **macOS (Apple Silicon /
+arm64)**
 
-`.github/workflows/build-image.yml` build ทั้ง `linux/amd64` และ
-`linux/arm64` ผ่าน Buildx/QEMU component ที่ติดตั้งทั้งหมด (Ubuntu 22.04
-base, OpenJDK 8, Hadoop, Hive, HBase, Spark, MariaDB, Python/JupyterLab)
-มี official build สำหรับ amd64 อยู่แล้ว ดังนั้นน่าจะใช้ได้ -- แต่ ณ ตอน
-เขียนนี้ workflow ยังไม่เคยรันจบจริง ดังนั้น **amd64 ยังไม่ได้รับการยืนยัน
-ว่าใช้งานได้จริง** อย่าถือว่าผ่านการทดสอบจนกว่า workflow จะรันจบและ smoke
-test บนเครื่อง amd64 จริง (หรือ CI) ยืนยัน แจ้งปัญหาได้ถ้าเจอ Windows
-Docker Desktop (ซึ่งรัน Linux container ปกติเป็น amd64) ก็อยู่ในสถานะ
-ยังไม่ยืนยันเดียวกันนี้
+`.github/workflows/build-image.yml` รันสำเร็จแล้วและ publish manifest
+แบบ multi-arch จริง -- ยืนยันด้วย `docker manifest inspect` ที่แสดงทั้ง
+`amd64` และ `arm64` อยู่ใน `ghcr.io/bobbylovemovie/trainbigdata:2026` และ
+`docker pull` ธรรมดาก็ทำงานได้โดยไม่ต้อง authenticate (package เป็น
+public แล้ว) สิ่งที่ **ยังไม่ได้รับการยืนยันอิสระ** คือการรัน amd64 build
+นี้แบบ end-to-end บนเครื่อง amd64 จริงหรือ Windows Docker Desktop --
+session นี้มีแต่เครื่อง arm64 ให้ทดสอบ ตัว image ควรใช้ได้บนนั้น (base
+Ubuntu 22.04 และทุก component ที่ติดตั้งมี official build สำหรับ amd64
+และครึ่ง amd64 ของ manifest ก็ build ผ่านไม่มี error) แต่ "ควรใช้ได้" ไม่
+เท่ากับ "ยืนยันแล้ว" -- แจ้งปัญหาได้ถ้าเจอ
 
 **ข้อจำกัดที่รู้อยู่แล้วของ arm64:** binary tarball ทางการของ Hadoop มี
 native library (`libhadoop.so`) สำหรับ amd64 เท่านั้น บน arm64 JVM จะ
@@ -407,14 +410,6 @@ matrix ระหว่าง `ubuntu-latest` (amd64) แบบ native กับ 
 ซับซ้อนที่ยังไม่คุ้มจนกว่าจะยืนยันว่า QEMU ใช้ไม่ได้จริง
 
 ## ข้อจำกัดที่รู้อยู่แล้ว / จงใจเก็บไว้เป็นของเก่า
-
-- **`ghcr.io/bobbylovemovie/trainbigdata:2026` ยังไม่ได้ publish**
-  `docker-compose.yml` ชี้ไปที่ tag นี้เป็น default ตามดีไซน์ "นักเรียน
-  pull อย่างเดียว" แต่จนกว่า `.github/workflows/build-image.yml` จะรันจริง
-  (push เข้า `master` หรือ `workflow_dispatch`) และตั้ง visibility ของ
-  GHCR package เป็น public แล้ว `docker compose pull` จะ fail แบบ "not
-  found" / "denied" ระหว่างนี้ ให้ใช้ dev override build เองแทน:
-  `docker compose -f docker-compose.yml -f docker-compose.dev.yml build && ... up -d`
 
 - **Impala**: ไม่ได้ติดตั้ง (ดู labs/06) มี Trino เป็นตัวเลือกเสริมใน
   อนาคต ยังไม่ได้ทำ

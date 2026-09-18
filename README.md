@@ -374,18 +374,22 @@ multi-tenant or internet-facing use.
 
 ## Compatibility
 
-Built and **fully tested end to end** (build + 15-check smoke test, twice
-from a clean volume state) on **macOS (Apple Silicon / arm64)**.
+Built and **fully tested end to end** (build + 15-check smoke test,
+multiple times from a clean volume state, including pulling and running
+the actual published `ghcr.io/bobbylovemovie/trainbigdata:2026` image) on
+**macOS (Apple Silicon / arm64)**.
 
-`.github/workflows/build-image.yml` builds `linux/amd64` in addition to
-`linux/arm64` via Buildx/QEMU. All installed components (Ubuntu 22.04 base,
-OpenJDK 8, Hadoop, Hive, HBase, Spark, MariaDB, Python/JupyterLab) publish
-official amd64 builds, so it should work -- but as of this writing that
-workflow has not yet completed a real run, so **amd64 is not independently
-confirmed working**. Don't take that as tested until a workflow run and a
-smoke test on real amd64 hardware (or CI) confirms it; report issues if you
-hit any. Windows Docker Desktop (which runs Linux containers, usually
-amd64) inherits this same untested status.
+`.github/workflows/build-image.yml` has run successfully and published a
+real multi-arch manifest -- confirmed with `docker manifest inspect`
+listing both `amd64` and `arm64` variants at `ghcr.io/bobbylovemovie/
+trainbigdata:2026`, and a plain `docker pull` of it works with no
+authentication (the package is public). What is **not yet independently
+confirmed** is running that amd64 build end-to-end on real amd64 hardware
+or Windows Docker Desktop -- this session only had arm64 hardware to test
+on. The image should work there (Ubuntu 22.04 base and every installed
+component ship official amd64 builds, and the amd64 half of the manifest
+built without error), but "should work" isn't "confirmed" -- report issues
+if you hit any.
 
 **Known arm64 limitation:** Hadoop's official binary tarball ships prebuilt
 native libraries (`libhadoop.so`) for amd64 only. On arm64 the JVM falls
@@ -404,14 +408,6 @@ real complexity that isn't worth taking on before the QEMU path is even
 confirmed to fail.
 
 ## Known limitations / intentionally left as legacy
-
-- **`ghcr.io/bobbylovemovie/trainbigdata:2026` has not been published yet.**
-  `docker-compose.yml` points at it as the default per the "students only
-  pull" design, but until `.github/workflows/build-image.yml` actually runs
-  (push to `master`, or `workflow_dispatch`) and GHCR package visibility is
-  set to public, `docker compose pull` will fail with "not found" / "denied".
-  Until then, use the dev override to build locally instead:
-  `docker compose -f docker-compose.yml -f docker-compose.dev.yml build && ... up -d`.
 
 - **Impala**: not installed (see labs/06). Trino noted as a possible future
   addition, not implemented.
