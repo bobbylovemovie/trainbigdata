@@ -3,11 +3,7 @@
 **English** | [ภาษาไทย](README.th.md)
 
 A single-node, Docker-based Big Data sandbox for learning Hadoop-ecosystem
-concepts, replacing the old Cloudera QuickStart VM (VirtualBox).
-
-```text
-Cloudera QuickStart VM  ->  Modern Docker Big Data Sandbox
-```
+concepts: HDFS, MapReduce, HBase, Hive, Kafka, Spark, and more.
 
 This is a **single-node educational sandbox** students run locally, one
 container per laptop -- not a production architecture, and not a
@@ -18,7 +14,7 @@ see "Next step toward multi-user" at the bottom).
 
 - Docker Desktop (Windows/macOS), or Docker Engine + Compose plugin (Linux)
 - Git
-- No VirtualBox. No Cloudera VM. No cloud account.
+- No VirtualBox, no VM images, no cloud account
 - 8 GB laptop RAM minimum, 16 GB preferred (see "Resource usage" below)
 
 ## Quick start
@@ -119,10 +115,10 @@ Apache Bigtop pairs together) rather than "latest of everything":
 | HBase | 2.5.15 | last actively maintained 2.x line, matches Hadoop 3.3 |
 | Hive | 3.1.3 | last release with first-class Java 8 support and the classic HiveQL surface this course teaches |
 | Spark | 3.5.9 (`-bin-hadoop3`) | last Spark 3.x line; Spark 4.x was judged too new/unproven for a teaching stack at time of writing |
-| Flume | 1.11.0 | legacy ingestion concept, see labs/06 |
+| Flume | 1.11.0 | ingestion concept, see labs/06 |
 | Kafka | 3.9.2 | last Kafka 3.x release; KRaft mode (no separate ZooKeeper process); see labs/07 |
 | MariaDB | Ubuntu 22.04 distro package | Hive metastore DB + RDBMS-ingestion lab source |
-| JDBC driver | mariadb-java-client 3.4.1 | replaces the obsolete `mysql-connector-java-5.1.23.jar` in `legacy/Spark/` |
+| JDBC driver | mariadb-java-client 3.4.1 | current MariaDB Connector/J |
 
 ### Compatibility gotchas hit and fixed
 
@@ -184,28 +180,16 @@ only for labs 4, 5, 8, 10.
 | # | Lab | Notes |
 |---|---|---|
 | 01 | Setup | install, pull, `student-check`, enter the container |
-| 02 | HDFS | `/user/student`, not `/user/cloudera` |
-| 03 | MapReduce | modern `WordCount` (see migration guide) |
-| 04 | HBase | column families renamed `personal_data`/`professional_data` |
-| 05 | Hive | Beeline, not the `hive` CLI; MovieLens partitioned tables |
-| 06 | Flume | legacy ingestion concept -- read the config, run the agent |
-| 07 | Kafka | modern replacement for Flume's role: durable, replayable topics |
-| 08 | RDBMS ingestion | replaces Sqoop: MariaDB -> Spark JDBC -> HDFS |
+| 02 | HDFS | core filesystem commands, `/user/student` |
+| 03 | MapReduce | classic `WordCount` job on YARN |
+| 04 | HBase | column families `personal_data`/`professional_data` |
+| 05 | Hive | HiveServer2 + Beeline; MovieLens partitioned tables |
+| 06 | Flume | ingestion concept -- read the config, run the agent |
+| 07 | Kafka | durable, replayable topics; contrast with Flume |
+| 08 | RDBMS ingestion | MariaDB -> Spark JDBC -> HDFS |
 | 09 | PySpark | WordCount over HDFS |
-| 10 | Spark SQL | `SparkSession`, not `HiveContext` |
-| 11 | Streaming | Structured Streaming, not DStreams |
-
-## Lab migration guide
-
-```text
-/user/cloudera              ->  /user/student
-Hive CLI (`hive`)            ->  Beeline (`beeline`)
-Sqoop                         ->  Spark JDBC (labs/08)
-HiveContext(sc)               ->  SparkSession.builder.enableHiveSupport()
-Spark Streaming (DStream)     ->  Structured Streaming
-Flume                          ->  Kafka (labs/06 -> labs/07)
-Impala                         ->  dropped entirely (Trino noted as a future option, not a lab)
-```
+| 10 | Spark SQL | `SparkSession`, DataFrames, temp views |
+| 11 | Streaming | Structured Streaming over a socket |
 
 ## Repository vs. Docker image
 
@@ -432,21 +416,16 @@ with `docker buildx imagetools create` -- not implemented yet since it adds
 real complexity that isn't worth taking on before the QEMU path is even
 confirmed to fail.
 
-## Known limitations / intentionally left as legacy
+## Known limitations
 
-- **Impala**: dropped entirely, not even kept as a placeholder lab (was
-  the old Lab 6). Trino noted as a possible future addition, not
-  implemented -- see labs/07-kafka's intro for the full reasoning.
-- **Flume**: included but explicitly labeled a legacy ingestion concept
-  (labs/06); **Kafka is now implemented** (labs/07, KRaft mode, Java 11
-  installed alongside Java 8 just for it), not merely noted as future work.
-- **Sqoop**: not installed (retired upstream); replaced by labs/08.
-- The original `org.myorg.WordCount` jar (`legacy/HDFS/wordcount.jar`) is
-  kept for reference only; `labs/03-mapreduce` ships a rebuilt, modern
-  replacement (see that lab's README for why).
-- `legacy/Spark/*.jar` (old MySQL connector, Oracle JDBC driver, Impala JDBC
-  driver, Twitter/Spark-Streaming-Twitter jars) are unused historical
-  artifacts from the old course, kept only for reference.
+- **Impala**: not included. Hive/Beeline (labs/05) and Spark SQL
+  (labs/10) already cover fast interactive SQL; adding Impala would mean
+  several more JVM daemons (catalogd, statestored, impalad) and its own
+  metadata cache on top of the same Hive metastore for no new capability
+  in this sandbox. Trino (https://trino.io) is a possible future
+  addition if a dedicated fast SQL engine is wanted later.
+- **Sqoop**: not installed (the Apache project itself is retired); the
+  RDBMS -> Hadoop learning objective is covered by labs/08 (Spark JDBC).
 
 ## Next step toward multi-user / JupyterHub
 

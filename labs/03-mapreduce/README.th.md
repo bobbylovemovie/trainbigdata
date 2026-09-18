@@ -8,12 +8,9 @@
 คำที่ปรากฏในไฟล์ข้อความ โดยให้ YARN เป็นตัวจัดสรรทรัพยากรและรันงานแบบ
 กระจาย (distributed) จริง ไม่ใช่แค่ script เดี่ยว ๆ
 
-> jar ตัวเดิมจากคอร์ส Cloudera (`org.myorg.WordCount`, คอมไพล์ปี 2013 ด้วย
-> Hadoop API รุ่นเก่ามาก) เก็บไว้อ้างอิงที่ `legacy/HDFS/wordcount.jar`
-> เท่านั้น ตัวที่ใช้จริงใน lab นี้คือเวอร์ชันใหม่ที่เขียนด้วย Hadoop
-> MapReduce API ปัจจุบัน (ดูซอร์สได้ที่ `WordCount.java` ในโฟลเดอร์นี้)
-> ซึ่งถูก compile ไว้ล่วงหน้าเป็น `wordcount.jar` ตั้งแต่ตอน build image
-> แล้ว ไม่ต้อง compile เอง
+> `WordCount.java` ในโฟลเดอร์นี้เขียนด้วย Hadoop MapReduce API ปัจจุบัน
+> และถูก compile ไว้ล่วงหน้าเป็น `wordcount.jar` ตั้งแต่ตอน build image
+> แล้ว ไม่ต้อง compile เองสำหรับแบบฝึกหัดพื้นฐาน
 
 ## ก่อนเริ่ม
 

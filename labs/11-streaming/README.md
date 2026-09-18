@@ -2,9 +2,9 @@
 
 [ภาษาไทย](README.th.md) | **English**
 
-The old DStream-based example (`legacy/Spark/StreamingWordCount_dstream.py`)
-uses an API Spark itself has deprecated in favor of **Structured
-Streaming**. This lab uses that instead: `streaming_wordcount.py`.
+This lab uses **Structured Streaming** (`streaming_wordcount.py`), the
+current API for processing data that arrives continuously rather than
+sitting in a file.
 
 Terminal 1:
 

@@ -2,22 +2,11 @@
 
 [ภาษาไทย](README.th.md) | **English**
 
-## Why this replaced the old Lab 6 (Impala)
+## Why Kafka
 
-The original Cloudera-era course had Impala here. It's been dropped
-entirely rather than kept as a placeholder: Impala is tightly coupled to
-Cloudera's packaging, adds several more JVM daemons (catalogd,
-statestored, impalad) and its own metadata-caching layer on top of the
-same Hive metastore -- real operational weight for a single-node teaching
-sandbox, for a learning objective ("fast interactive SQL") already
-covered by Hive/Beeline (Lab 5) and Spark SQL (Lab 10). If a dedicated
-fast SQL engine is wanted later, **Trino** (https://trino.io) is the
-modern equivalent -- not implemented here.
-
-**Kafka**, on the other hand, is the direct modern replacement for what
-**Lab 6 -- Flume** taught: a long-running process that ingests a stream
-of events. Do Lab 6 first if you haven't -- this lab makes the most sense
-as a contrast to it.
+Kafka is the direct modern equivalent of what **Lab 6 -- Flume** taught:
+a long-running process that ingests a stream of events. Do Lab 6 first
+if you haven't -- this lab makes the most sense as a contrast to it.
 
 ## Kafka vs. Flume, in one picture
 

@@ -8,9 +8,8 @@
 ไฟล์แบบกระจายที่เป็นหัวใจของ Hadoop ทุกอย่างใน Big Data ecosystem
 (MapReduce, Hive, Spark) อ่าน/เขียนข้อมูลผ่านระบบนี้
 
-ของเก่า (คอร์ส Cloudera) ใช้โฟลเดอร์ `/user/cloudera` สำหรับเก็บไฟล์ของ
-ผู้ใช้ แต่ sandbox นี้ใช้ **`/user/student`** แทน (ชื่อผู้ใช้ Linux ใน
-container คือ `student`)
+ไฟล์ของนักศึกษาแต่ละคนเก็บไว้ที่ **`/user/student`** ใน HDFS (ชื่อผู้ใช้
+Linux ใน container คือ `student`)
 
 ## ก่อนเริ่ม
 

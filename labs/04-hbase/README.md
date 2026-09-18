@@ -5,9 +5,8 @@
 Start HBase first: `labctl start hbase` (from your host: `docker compose
 exec bigdata labctl start hbase`).
 
-Column family names used to contain spaces (`'personal data'`). Spaces in
-HBase identifiers are legal but awkward to type and script against, so this
-lab uses underscore-based names instead: `personal_data`, `professional_data`.
+This table uses two column families: `personal_data` and
+`professional_data`.
 
 ```bash
 hbase shell

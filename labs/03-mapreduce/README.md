@@ -2,12 +2,9 @@
 
 [ภาษาไทย](README.th.md) | **English**
 
-The original `HDFS/wordcount.jar` (`org.myorg.WordCount`, compiled 2013
-against the old Hadoop 0.20 `mapred` API) is kept at
-`legacy/HDFS/wordcount.jar` for reference. It was replaced -- see
-`WordCount.java` in this folder, which uses the current `mapreduce` API and
-is prebuilt into `wordcount.jar` in this same folder during the Docker
-image build.
+`WordCount.java` in this folder uses the current Hadoop `mapreduce` API
+and is prebuilt into `wordcount.jar` in this same folder during the
+Docker image build -- nothing to compile yourself for the basic exercise.
 
 ```bash
 hadoop fs -mkdir -p /user/student/input

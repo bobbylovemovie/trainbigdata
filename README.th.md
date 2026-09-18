@@ -3,11 +3,7 @@
 [English](README.md) | **ภาษาไทย**
 
 Big Data Sandbox แบบ single-node บน Docker สำหรับเรียนรู้แนวคิด Hadoop
-ecosystem มาแทนที่ Cloudera QuickStart VM (VirtualBox) แบบเดิม
-
-```text
-Cloudera QuickStart VM  ->  Modern Docker Big Data Sandbox
-```
+ecosystem: HDFS, MapReduce, HBase, Hive, Kafka, Spark และอื่น ๆ
 
 นี่คือ **sandbox เพื่อการศึกษาแบบ single-node** ที่นักเรียนรันเองบนเครื่อง
 ตัวเอง คนละ container ต่อคน -- ไม่ใช่ production architecture และไม่ใช่
@@ -18,7 +14,7 @@ Kubernetes -- ดู "ขั้นตอนถัดไปสำหรับ mul
 
 - Docker Desktop (Windows/macOS) หรือ Docker Engine + Compose plugin (Linux)
 - Git
-- ไม่ต้องใช้ VirtualBox ไม่ต้องใช้ Cloudera VM ไม่ต้องมี cloud account
+- ไม่ต้องใช้ VirtualBox ไม่ต้องใช้ VM image ไม่ต้องมี cloud account
 - RAM ขั้นต่ำ 8 GB แนะนำ 16 GB (ดู "การใช้ทรัพยากร" ด้านล่าง)
 
 ## เริ่มต้นใช้งาน
@@ -120,10 +116,10 @@ hoc อยู่แล้ว (`spark.sql(...).toPandas().plot(...)`) การ�
 | HBase | 2.5.15 | สาย 2.x ตัวล่าสุดที่ยังดูแลอยู่ เข้ากับ Hadoop 3.3 |
 | Hive | 3.1.3 | เวอร์ชันล่าสุดที่รองรับ Java 8 เต็มรูปแบบ และใช้ HiveQL แบบคลาสสิกตามที่คอร์สนี้สอน |
 | Spark | 3.5.9 (`-bin-hadoop3`) | สาย Spark 3.x ตัวล่าสุด; Spark 4.x ถูกประเมินว่าใหม่/ยังไม่นิ่งพอสำหรับ stack การสอน ณ ตอนที่เขียน |
-| Flume | 1.11.0 | แนวคิด ingestion แบบเก่า ดู labs/06 |
+| Flume | 1.11.0 | แนวคิด ingestion ดู labs/06 |
 | Kafka | 3.9.2 | สาย Kafka 3.x ตัวล่าสุด; ใช้ KRaft mode (ไม่ต้องมี ZooKeeper แยก) ดู labs/07 |
 | MariaDB | แพ็กเกจของ Ubuntu 22.04 | ฐานข้อมูล Hive metastore + แหล่งข้อมูลของ lab การ ingest จาก RDBMS |
-| JDBC driver | mariadb-java-client 3.4.1 | แทนที่ `mysql-connector-java-5.1.23.jar` ตัวเก่าที่อยู่ใน `legacy/Spark/` |
+| JDBC driver | mariadb-java-client 3.4.1 | MariaDB Connector/J เวอร์ชันปัจจุบัน |
 
 ### จุดเข้ากันไม่ได้ที่เจอและแก้ไปแล้ว
 
@@ -191,28 +187,16 @@ labctl stop hbase
 | # | Lab | หมายเหตุ |
 |---|---|---|
 | 01 | Setup | ติดตั้ง, pull image, `student-check`, เข้า container |
-| 02 | HDFS | ใช้ `/user/student` ไม่ใช่ `/user/cloudera` |
-| 03 | MapReduce | `WordCount` เวอร์ชันใหม่ (ดู migration guide) |
-| 04 | HBase | เปลี่ยนชื่อ column family เป็น `personal_data`/`professional_data` |
-| 05 | Hive | ใช้ Beeline แทน `hive` CLI; ตาราง MovieLens แบบ partitioned |
-| 06 | Flume | แนวคิด ingestion แบบเก่า -- อ่าน config แล้วรัน agent |
-| 07 | Kafka | ตัวทดแทนสมัยใหม่ของ Flume: topic แบบคงทน เล่นย้อนได้ |
-| 08 | RDBMS ingestion | แทนที่ Sqoop: MariaDB -> Spark JDBC -> HDFS |
+| 02 | HDFS | คำสั่งพื้นฐานของระบบไฟล์, `/user/student` |
+| 03 | MapReduce | งาน `WordCount` แบบคลาสสิกบน YARN |
+| 04 | HBase | column family `personal_data`/`professional_data` |
+| 05 | Hive | HiveServer2 + Beeline; ตาราง MovieLens แบบ partitioned |
+| 06 | Flume | แนวคิด ingestion -- อ่าน config แล้วรัน agent |
+| 07 | Kafka | topic แบบคงทน เล่นย้อนได้; เทียบกับ Flume |
+| 08 | RDBMS ingestion | MariaDB -> Spark JDBC -> HDFS |
 | 09 | PySpark | WordCount บน HDFS |
-| 10 | Spark SQL | ใช้ `SparkSession` ไม่ใช่ `HiveContext` |
-| 11 | Streaming | ใช้ Structured Streaming ไม่ใช่ DStreams |
-
-## คู่มือ migration ของ lab
-
-```text
-/user/cloudera              ->  /user/student
-Hive CLI (`hive`)            ->  Beeline (`beeline`)
-Sqoop                         ->  Spark JDBC (labs/08)
-HiveContext(sc)               ->  SparkSession.builder.enableHiveSupport()
-Spark Streaming (DStream)     ->  Structured Streaming
-Flume                          ->  Kafka (labs/06 -> labs/07)
-Impala                         ->  ตัดออกไปเลย (มี Trino เป็นตัวเลือกในอนาคต ไม่ใช่ lab)
-```
+| 10 | Spark SQL | `SparkSession`, DataFrame, temp view |
+| 11 | Streaming | Structured Streaming ผ่าน socket |
 
 ## Repository กับ Docker image
 
@@ -438,21 +422,16 @@ matrix ระหว่าง `ubuntu-latest` (amd64) แบบ native กับ 
 เดียวด้วย `docker buildx imagetools create` -- ยังไม่ได้ทำเพราะเพิ่มความ
 ซับซ้อนที่ยังไม่คุ้มจนกว่าจะยืนยันว่า QEMU ใช้ไม่ได้จริง
 
-## ข้อจำกัดที่รู้อยู่แล้ว / จงใจเก็บไว้เป็นของเก่า
+## ข้อจำกัดที่รู้อยู่แล้ว
 
-- **Impala**: ตัดออกไปเลย ไม่เก็บไว้เป็น lab ให้อ้างอิงด้วยซ้ำ (เดิมคือ
-  Lab 6) มี Trino เป็นตัวเลือกเสริมในอนาคต ยังไม่ได้ทำ -- เหตุผลเต็ม ๆ
-  อยู่ในบทนำของ labs/07-kafka
-- **Flume**: ติดตั้งไว้แต่ระบุชัดว่าเป็นแนวคิด ingestion แบบเก่า
-  (labs/06) **Kafka ทำเสร็จแล้วจริง** (labs/07, KRaft mode, ติดตั้ง Java
-  11 คู่กับ Java 8 ไว้เฉพาะสำหรับตัวนี้) ไม่ใช่แค่โน้ตไว้เฉย ๆ อีกต่อไป
-- **Sqoop**: ไม่ได้ติดตั้ง (upstream เลิกดูแลแล้ว) แทนที่ด้วย labs/08
-- jar ตัวเดิม `org.myorg.WordCount` (`legacy/HDFS/wordcount.jar`) เก็บไว้
-  เพื่ออ้างอิงเท่านั้น `labs/03-mapreduce` มีเวอร์ชัน rebuild ใหม่ให้ (ดู
-  README ของ lab นั้นว่าทำไม)
-- `legacy/Spark/*.jar` (MySQL connector ตัวเก่า, Oracle JDBC driver,
-  Impala JDBC driver, jar ของ Twitter/Spark-Streaming-Twitter) เป็นของ
-  เก่าจากคอร์สเดิมที่ไม่ได้ใช้แล้ว เก็บไว้อ้างอิงเท่านั้น
+- **Impala**: ไม่ได้รวมมาให้ Hive/Beeline (labs/05) และ Spark SQL
+  (labs/10) ครอบคลุม SQL แบบ interactive ที่เร็วอยู่แล้ว การเพิ่ม Impala
+  จะเพิ่ม JVM daemon อีกหลายตัว (catalogd, statestored, impalad) พร้อม
+  ระบบแคช metadata ของตัวเองซ้อนทับ Hive metastore ตัวเดิม โดยไม่ได้
+  ความสามารถใหม่ใด ๆ เพิ่มใน sandbox นี้ Trino (https://trino.io) เป็น
+  ตัวเลือกเสริมในอนาคตถ้าต้องการ SQL engine เฉพาะทางที่เร็วจริง ๆ
+- **Sqoop**: ไม่ได้ติดตั้ง (โปรเจกต์ Apache เองเลิกดูแลไปแล้ว) เป้าหมาย
+  การเรียนรู้ RDBMS -> Hadoop ถูกครอบคลุมโดย labs/08 (Spark JDBC) แทน
 
 ## ขั้นตอนถัดไปสำหรับ multi-user / JupyterHub
 

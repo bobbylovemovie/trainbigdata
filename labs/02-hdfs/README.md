@@ -2,7 +2,7 @@
 
 [ภาษาไทย](README.th.md) | **English**
 
-Old Cloudera lab used `/user/cloudera`. This sandbox uses `/user/student`.
+Every student's files live under `/user/student` in HDFS.
 
 ```bash
 cp /course/datasets/PG2600.txt ~/PG2600.txt

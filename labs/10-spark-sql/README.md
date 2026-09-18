@@ -2,8 +2,8 @@
 
 [ภาษาไทย](README.th.md) | **English**
 
-The old lab used `HiveContext(sc)`, deprecated since Spark 2.0. This lab
-uses `SparkSession` + DataFrame + a temp view instead.
+This lab uses `SparkSession` + DataFrame + a temp view -- the current,
+supported way to do Spark SQL.
 
 ```python
 from pyspark.sql import SparkSession

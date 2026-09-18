@@ -7,9 +7,8 @@
 เรียนรู้ Spark SQL -- วิธีใช้ SQL หรือ DataFrame API (ซึ่งอ่านง่ายกว่า
 RDD API ที่ใช้ใน lab 9 มาก) มาประมวลผลข้อมูลบน Spark
 
-> ของเดิมใช้ `HiveContext(sc)` ซึ่งถูกเลิกใช้ (deprecated) มาตั้งแต่
-> Spark 2.0 lab นี้ใช้ `SparkSession` แทน ซึ่งเป็น entry point เดียวที่
-> รวมทุกความสามารถของ Spark (SQL, DataFrame, Streaming) ไว้ในที่เดียว
+> lab นี้ใช้ `SparkSession` ซึ่งเป็น entry point เดียวที่รวมทุก
+> ความสามารถของ Spark (SQL, DataFrame, Streaming) ไว้ในที่เดียว
 
 ## ขั้นตอนที่ 1: เปิด PySpark shell
 
@@ -81,7 +80,7 @@ spark.sql("SELECT * FROM users LIMIT 10").show()
 
 ## สรุป
 
-คุณใช้ `SparkSession` แทน `HiveContext` ที่เลิกใช้แล้ว และเห็นว่า Spark
-SQL เชื่อมกับ Hive metastore เดียวกันได้อย่างไร้รอยต่อ -- lab ถัดไป
+คุณใช้ `SparkSession` ทำ Spark SQL และเห็นว่ามันเชื่อมกับ Hive metastore
+เดียวกันได้อย่างไร้รอยต่อ -- lab ถัดไป
 (**Lab 11 -- Streaming**) จะเปลี่ยนจากข้อมูลนิ่ง (batch) ไปเป็นข้อมูลที่
 ไหลเข้ามาต่อเนื่อง (streaming)
