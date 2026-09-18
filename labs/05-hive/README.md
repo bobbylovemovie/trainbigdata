@@ -98,6 +98,9 @@ doesn't own it.
 
 ## MovieLens: external table + partitions
 
+Quit Beeline first (`!quit`) -- the next few commands are bash, run at
+the regular `student@bigdata` prompt, not inside Beeline.
+
 ```bash
 mkdir -p ~/movielens_dataset && cd ~/movielens_dataset
 unzip /course/datasets/ml-100k.zip
