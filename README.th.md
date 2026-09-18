@@ -145,6 +145,13 @@ container ได้ดีกว่าวิธีเดิมแบบ `start-df
   คู่นี้เหมือนกัน** (`JDOFatalInternalException` ตอน map field `bitVector`
   ที่เป็น BLOB) แก้ด้วย `hive.stats.autogather=false` ใน `hive-site.xml`
   นักเรียนยังรัน `ANALYZE TABLE` เองได้ตามปกติ
+- **`labctl`/`supervisorctl` ขึ้น `PermissionError` ถ้าไม่ได้รันด้วย
+  root** (นักเรียนคนหนึ่งเจอจากการเปิด terminal ผ่านหน้าเว็บ JupyterLab
+  ซึ่งรันเป็น user `student` ไม่ใช่ root) ต้นเหตุคือ socket ที่ใช้คุมกับ
+  supervisor ตั้งไว้ `chmod=0700` (root คนเดียวเข้าได้) แก้โดยเปลี่ยนเป็น
+  `chmod=0666` ใน `docker/supervisor/supervisord.conf` -- เป็น tradeoff
+  ที่รับได้เพราะ sandbox นี้ระบุไว้อยู่แล้วว่าเป็นแบบ local ผู้ใช้คนเดียว
+  (ดูหัวข้อ "ความปลอดภัย" ด้านบน)
 
 ## สั่งงาน service: `labctl`
 

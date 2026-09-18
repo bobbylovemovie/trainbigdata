@@ -141,6 +141,13 @@ recorded here rather than left implicit in config comments alone:
   MariaDB/DataNucleus combination** (`JDOFatalInternalException` mapping
   the stats `bitVector` BLOB field). Fixed with `hive.stats.autogather=false`
   in `hive-site.xml`; students can still run `ANALYZE TABLE` explicitly.
+- **`labctl`/`supervisorctl` failed with `PermissionError` for any
+  non-root terminal** (reported by a student using the JupyterLab
+  browser terminal, which runs as `student`, not root). The supervisor
+  control socket was `chmod=0700` (owner/root-only); fixed by loosening
+  it to `chmod=0666` in `docker/supervisor/supervisord.conf` -- an
+  acceptable tradeoff given this is already documented as a local,
+  single-user sandbox (see "Security" above).
 
 ## Service control: `labctl`
 
