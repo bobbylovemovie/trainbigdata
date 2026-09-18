@@ -1,5 +1,7 @@
 # Lab 1 -- Setup
 
+[ภาษาไทย](README.th.md) | **English**
+
 Do this once, before class if possible.
 
 ## Step 1: Install

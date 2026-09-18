@@ -1,5 +1,7 @@
 # Lab 10 -- Spark SQL
 
+[ภาษาไทย](README.th.md) | **English**
+
 The old lab used `HiveContext(sc)`, deprecated since Spark 2.0. This lab
 uses `SparkSession` + DataFrame + a temp view instead.
 

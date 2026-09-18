@@ -51,9 +51,10 @@ docker compose exec bigdata bash
 labctl status
 ```
 
-คู่มือละเอียด: `labs/01-setup/README.md` จากนั้นต่อด้วย
-`labs/02-hdfs/README.md` (อ่านได้จากใน container ที่
-`~/labs/02-hdfs/README.md` หรือผ่าน JupyterLab file browser ก็ได้)
+คู่มือละเอียด (ภาษาไทย): `labs/01-setup/README.th.md` จากนั้นต่อด้วย
+`labs/02-hdfs/README.th.md` (อ่านได้จากใน container ที่
+`~/labs/02-hdfs/README.th.md` หรือผ่าน JupyterLab file browser ก็ได้ --
+ทุก lab มีทั้งเวอร์ชันไทย/อังกฤษ สลับภาษาได้จากลิงก์บนสุดของแต่ละไฟล์)
 
 จากจุดนี้ไป ทุกคำสั่งใน lab คือคำสั่ง Linux ที่รัน **ภายใน container**
 เหมือนกันหมดไม่ว่าเครื่องคุณจะเป็น Windows, macOS หรือ Linux
@@ -160,6 +161,10 @@ labctl stop hbase
 -- เปิดเฉพาะตอนทำ lab 4, 5, 8, 10
 
 ## Lab ทั้งหมด
+
+ทุก lab มีคู่มือละเอียดเป็นภาษาไทยอยู่ที่ `labs/<หมายเลข>/README.th.md`
+(เช่น `labs/02-hdfs/README.th.md`) พร้อมคำอธิบายทีละคำสั่ง ตัวอย่างผล
+ลัพธ์ และวิธีแก้ปัญหาที่เจอบ่อย
 
 | # | Lab | หมายเหตุ |
 |---|---|---|

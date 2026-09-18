@@ -1,5 +1,7 @@
 # Lab 6 -- Impala (Deprecated / Optional)
 
+[ภาษาไทย](README.th.md) | **English**
+
 Impala is not installed in this sandbox. It was tightly coupled to
 Cloudera's packaging, adds another JVM-class daemon (catalogd/statestored/
 impalad) and its own metadata-caching model on top of the same Hive

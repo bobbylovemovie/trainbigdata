@@ -1,5 +1,7 @@
 # Lab 9 -- Spark / PySpark
 
+[ภาษาไทย](README.th.md) | **English**
+
 ```bash
 pyspark
 ```

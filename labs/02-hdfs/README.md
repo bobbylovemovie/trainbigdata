@@ -1,5 +1,7 @@
 # Lab 2 -- HDFS
 
+[ภาษาไทย](README.th.md) | **English**
+
 Old Cloudera lab used `/user/cloudera`. This sandbox uses `/user/student`.
 
 ```bash

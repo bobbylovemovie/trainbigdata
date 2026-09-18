@@ -1,5 +1,7 @@
 # Lab 8 -- RDBMS Ingestion (replaces Apache Sqoop)
 
+[ภาษาไทย](README.th.md) | **English**
+
 Apache Sqoop is retired. The learning objective survives:
 
 ```text

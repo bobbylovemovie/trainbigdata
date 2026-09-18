@@ -1,5 +1,7 @@
 # Lab 5 -- Hive
 
+[ภาษาไทย](README.th.md) | **English**
+
 Start Hive first: `labctl start hive` (needs `core` and `mariadb` up,
 which `labctl` handles for you).
 

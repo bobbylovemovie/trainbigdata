@@ -1,5 +1,7 @@
 # Lab 3 -- MapReduce
 
+[ภาษาไทย](README.th.md) | **English**
+
 The original `HDFS/wordcount.jar` (`org.myorg.WordCount`, compiled 2013
 against the old Hadoop 0.20 `mapred` API) is kept at
 `legacy/HDFS/wordcount.jar` for reference. It was replaced -- see

@@ -1,5 +1,7 @@
 # Lab 7 -- Apache Flume (Legacy Ingestion Concept)
 
+[ภาษาไทย](README.th.md) | **English**
+
 Flume is included in the image (`/opt/flume`) because it remained easy and
 stable to install alongside the rest of the stack, and the concept it
 teaches -- a long-running **agent** moving streaming events into HDFS via a

@@ -1,5 +1,7 @@
 # Lab 4 -- HBase
 
+[ภาษาไทย](README.th.md) | **English**
+
 Start HBase first: `labctl start hbase` (from your host: `docker compose
 exec bigdata labctl start hbase`).
 
