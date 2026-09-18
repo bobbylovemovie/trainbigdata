@@ -8,6 +8,8 @@ ARG HIVE_VERSION=3.1.3
 ARG HBASE_VERSION=2.5.15
 ARG SPARK_VERSION=3.5.9
 ARG FLUME_VERSION=1.11.0
+ARG KAFKA_VERSION=3.9.2
+ARG KAFKA_SCALA_VERSION=2.13
 ARG MARIADB_JDBC_VERSION=3.4.1
 
 ENV DEBIAN_FRONTEND=noninteractive \
@@ -18,14 +20,21 @@ ENV DEBIAN_FRONTEND=noninteractive \
     HBASE_HOME=/opt/hbase \
     SPARK_HOME=/opt/spark \
     FLUME_HOME=/opt/flume \
+    KAFKA_HOME=/opt/kafka \
     HADOOP_CONF_DIR=/opt/hadoop/etc/hadoop \
     HIVE_CONF_DIR=/opt/hive/conf \
     HBASE_CONF_DIR=/opt/hbase/conf \
     SPARK_CONF_DIR=/opt/spark/conf
 
 # --- OS packages -----------------------------------------------------------
+# openjdk-11 is installed alongside openjdk-8 only for Kafka: Kafka 3.x
+# requires Java 11+ for the broker, while Hadoop/Hive/HBase/Spark here are
+# pinned to Java 8 (Hive 3.1.3's official baseline). The container-wide
+# JAVA_HOME stays on 8; Kafka's supervisor program overrides JAVA_HOME to
+# 11 just for that one process (see docker/supervisor/supervisord.conf).
 RUN apt-get update && apt-get install -y --no-install-recommends \
         openjdk-8-jdk-headless \
+        openjdk-11-jdk-headless \
         python3 python3-pip python3-venv \
         mariadb-server mariadb-client \
         curl wget ca-certificates gnupg netcat-openbsd less vim procps unzip \
@@ -33,10 +42,17 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # JAVA_HOME differs by arch (java-8-openjdk-amd64 / java-8-openjdk-arm64);
-# resolve it once at build time instead of relying on shell expansion at runtime.
-RUN ln -sfn "$(dirname "$(dirname "$(readlink -f "$(which javac)")")")" /usr/lib/jvm/default-java
+# resolve both versions once at build time instead of relying on shell
+# expansion at runtime.
+# Resolve by the version-specific install path, NOT `which javac` --
+# with both JDKs installed, update-alternatives points the unversioned
+# `javac`/`java` at whichever was configured last (Java 11 here), so
+# `which javac` no longer reliably means "Java 8".
+RUN ln -sfn /usr/lib/jvm/java-8-openjdk-* /usr/lib/jvm/default-java \
+    && ln -sfn /usr/lib/jvm/java-11-openjdk-* /usr/lib/jvm/default-java11
 ENV JAVA_HOME=/usr/lib/jvm/default-java
-ENV PATH=${JAVA_HOME}/bin:${HADOOP_HOME}/bin:${HADOOP_HOME}/sbin:${HIVE_HOME}/bin:${HBASE_HOME}/bin:${SPARK_HOME}/bin:${FLUME_HOME}/bin:${PATH}
+ENV JAVA11_HOME=/usr/lib/jvm/default-java11
+ENV PATH=${JAVA_HOME}/bin:${HADOOP_HOME}/bin:${HADOOP_HOME}/sbin:${HIVE_HOME}/bin:${HBASE_HOME}/bin:${SPARK_HOME}/bin:${FLUME_HOME}/bin:${KAFKA_HOME}/bin:${PATH}
 
 # --- Hadoop ------------------------------------------------------------------
 RUN wget -q "https://downloads.apache.org/hadoop/common/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz" -O /tmp/hadoop.tgz \
@@ -70,6 +86,12 @@ RUN wget -q "https://downloads.apache.org/flume/${FLUME_VERSION}/apache-flume-${
     && mv /opt/apache-flume-${FLUME_VERSION}-bin ${FLUME_HOME} \
     && rm /tmp/flume.tgz
 
+# --- Kafka (KRaft mode -- no separate ZooKeeper process needed) -------------
+RUN wget -q "https://archive.apache.org/dist/kafka/${KAFKA_VERSION}/kafka_${KAFKA_SCALA_VERSION}-${KAFKA_VERSION}.tgz" -O /tmp/kafka.tgz \
+    && tar -xzf /tmp/kafka.tgz -C /opt \
+    && mv /opt/kafka_${KAFKA_SCALA_VERSION}-${KAFKA_VERSION} ${KAFKA_HOME} \
+    && rm /tmp/kafka.tgz
+
 # --- MariaDB JDBC driver, shared by Hive metastore and the Spark JDBC lab ---
 RUN wget -q "https://repo1.maven.org/maven2/org/mariadb/jdbc/mariadb-java-client/${MARIADB_JDBC_VERSION}/mariadb-java-client-${MARIADB_JDBC_VERSION}.jar" \
         -O ${HIVE_HOME}/lib/mariadb-java-client-${MARIADB_JDBC_VERSION}.jar \
@@ -85,13 +107,14 @@ RUN pip3 install --no-cache-dir --upgrade pip \
 # --- student user + directories ---------------------------------------------
 RUN useradd -m -s /bin/bash student \
     && echo "student:student" | chpasswd \
-    && mkdir -p /opt/hadoop/data/nn /opt/hadoop/data/dn /opt/hadoop/data/tmp /opt/hadoop/data/pid /opt/hadoop/data/logs /opt/hadoop/data/zookeeper /var/log/lab /home/student/notebooks \
-    && chown -R student:student ${HADOOP_HOME} ${HIVE_HOME} ${HBASE_HOME} ${SPARK_HOME} ${FLUME_HOME} /var/log/lab /home/student
+    && mkdir -p /opt/hadoop/data/nn /opt/hadoop/data/dn /opt/hadoop/data/tmp /opt/hadoop/data/pid /opt/hadoop/data/logs /opt/hadoop/data/zookeeper /opt/hadoop/data/kafka /var/log/lab /home/student/notebooks \
+    && chown -R student:student ${HADOOP_HOME} ${HIVE_HOME} ${HBASE_HOME} ${SPARK_HOME} ${FLUME_HOME} ${KAFKA_HOME} /var/log/lab /home/student
 
 COPY docker/config/hadoop/ ${HADOOP_CONF_DIR}/
 COPY docker/config/hive/hive-site.xml ${HIVE_CONF_DIR}/hive-site.xml
 COPY docker/config/hbase/hbase-site.xml ${HBASE_CONF_DIR}/hbase-site.xml
 COPY docker/config/flume/flume.conf ${FLUME_HOME}/conf/flume.conf
+COPY docker/config/kafka/server.properties ${KAFKA_HOME}/config/kraft/server.properties
 COPY docker/supervisor/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY scripts/labctl /usr/local/bin/labctl
 COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh

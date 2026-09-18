@@ -115,11 +115,13 @@ hoc อยู่แล้ว (`spark.sql(...).toPandas().plot(...)`) การ�
 | Component | เวอร์ชัน | หมายเหตุ |
 |---|---|---|
 | Java | OpenJDK 8 | เวอร์ชันมาตรฐานของ Hive 3.1.3; Hadoop 3.3/HBase 2.5/Spark 3.5 ก็ยังรองรับอยู่ |
+| Java (เฉพาะ Kafka) | OpenJDK 11 | Kafka 3.x+ ต้องการ Java 11 ขึ้นไป ติดตั้งคู่กับ Java 8 ไว้ ใช้เฉพาะ supervisor program ของ Kafka เท่านั้น |
 | Hadoop | 3.3.6 | |
 | HBase | 2.5.15 | สาย 2.x ตัวล่าสุดที่ยังดูแลอยู่ เข้ากับ Hadoop 3.3 |
 | Hive | 3.1.3 | เวอร์ชันล่าสุดที่รองรับ Java 8 เต็มรูปแบบ และใช้ HiveQL แบบคลาสสิกตามที่คอร์สนี้สอน |
 | Spark | 3.5.9 (`-bin-hadoop3`) | สาย Spark 3.x ตัวล่าสุด; Spark 4.x ถูกประเมินว่าใหม่/ยังไม่นิ่งพอสำหรับ stack การสอน ณ ตอนที่เขียน |
-| Flume | 1.11.0 | แนวคิด ingestion แบบเก่า ดู labs/07 |
+| Flume | 1.11.0 | แนวคิด ingestion แบบเก่า ดู labs/06 |
+| Kafka | 3.9.2 | สาย Kafka 3.x ตัวล่าสุด; ใช้ KRaft mode (ไม่ต้องมี ZooKeeper แยก) ดู labs/07 |
 | MariaDB | แพ็กเกจของ Ubuntu 22.04 | ฐานข้อมูล Hive metastore + แหล่งข้อมูลของ lab การ ingest จาก RDBMS |
 | JDBC driver | mariadb-java-client 3.4.1 | แทนที่ `mysql-connector-java-5.1.23.jar` ตัวเก่าที่อยู่ใน `legacy/Spark/` |
 
@@ -193,8 +195,8 @@ labctl stop hbase
 | 03 | MapReduce | `WordCount` เวอร์ชันใหม่ (ดู migration guide) |
 | 04 | HBase | เปลี่ยนชื่อ column family เป็น `personal_data`/`professional_data` |
 | 05 | Hive | ใช้ Beeline แทน `hive` CLI; ตาราง MovieLens แบบ partitioned |
-| 06 | Impala | เลิกใช้/ไม่บังคับ ไม่ได้ติดตั้ง -- ดู labs/06 |
-| 07 | Flume | แนวคิด ingestion แบบเก่า มี Kafka เป็นตัวเลือกทดแทนในอนาคต |
+| 06 | Flume | แนวคิด ingestion แบบเก่า -- อ่าน config แล้วรัน agent |
+| 07 | Kafka | ตัวทดแทนสมัยใหม่ของ Flume: topic แบบคงทน เล่นย้อนได้ |
 | 08 | RDBMS ingestion | แทนที่ Sqoop: MariaDB -> Spark JDBC -> HDFS |
 | 09 | PySpark | WordCount บน HDFS |
 | 10 | Spark SQL | ใช้ `SparkSession` ไม่ใช่ `HiveContext` |
@@ -208,7 +210,8 @@ Hive CLI (`hive`)            ->  Beeline (`beeline`)
 Sqoop                         ->  Spark JDBC (labs/08)
 HiveContext(sc)               ->  SparkSession.builder.enableHiveSupport()
 Spark Streaming (DStream)     ->  Structured Streaming
-Impala                        ->  เลิกใช้/ไม่บังคับ (มี Trino เป็นตัวเลือกในอนาคต)
+Flume                          ->  Kafka (labs/06 -> labs/07)
+Impala                         ->  ตัดออกไปเลย (มี Trino เป็นตัวเลือกในอนาคต ไม่ใช่ lab)
 ```
 
 ## Repository กับ Docker image
@@ -382,6 +385,7 @@ Hive ต้องค้างไว้หลังใช้เสร็จ:
 | 02 HDFS, 03 MapReduce, 09 PySpark, 10 Spark SQL*, 11 Streaming | `core` (default) | -- |
 | 04 HBase | `labctl start hbase` | `labctl stop hbase` |
 | 05 Hive, 08 RDBMS ingestion | `labctl start hive` | `labctl stop hive` |
+| 07 Kafka | `labctl start kafka` | `labctl stop kafka` |
 
 \* ตัวอย่างเสริมที่เชื่อม Hive ใน labs/10 ต้องเปิด `hive` ด้วย
 
@@ -436,10 +440,12 @@ matrix ระหว่าง `ubuntu-latest` (amd64) แบบ native กับ 
 
 ## ข้อจำกัดที่รู้อยู่แล้ว / จงใจเก็บไว้เป็นของเก่า
 
-- **Impala**: ไม่ได้ติดตั้ง (ดู labs/06) มี Trino เป็นตัวเลือกเสริมใน
-  อนาคต ยังไม่ได้ทำ
+- **Impala**: ตัดออกไปเลย ไม่เก็บไว้เป็น lab ให้อ้างอิงด้วยซ้ำ (เดิมคือ
+  Lab 6) มี Trino เป็นตัวเลือกเสริมในอนาคต ยังไม่ได้ทำ -- เหตุผลเต็ม ๆ
+  อยู่ในบทนำของ labs/07-kafka
 - **Flume**: ติดตั้งไว้แต่ระบุชัดว่าเป็นแนวคิด ingestion แบบเก่า
-  (labs/07) มี Kafka เป็นตัวเลือกทดแทนในอนาคต ยังไม่ได้ทำ
+  (labs/06) **Kafka ทำเสร็จแล้วจริง** (labs/07, KRaft mode, ติดตั้ง Java
+  11 คู่กับ Java 8 ไว้เฉพาะสำหรับตัวนี้) ไม่ใช่แค่โน้ตไว้เฉย ๆ อีกต่อไป
 - **Sqoop**: ไม่ได้ติดตั้ง (upstream เลิกดูแลแล้ว) แทนที่ด้วย labs/08
 - jar ตัวเดิม `org.myorg.WordCount` (`legacy/HDFS/wordcount.jar`) เก็บไว้
   เพื่ออ้างอิงเท่านั้น `labs/03-mapreduce` มีเวอร์ชัน rebuild ใหม่ให้ (ดู

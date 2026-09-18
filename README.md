@@ -114,11 +114,13 @@ Apache Bigtop pairs together) rather than "latest of everything":
 | Component | Version | Notes |
 |---|---|---|
 | Java | OpenJDK 8 | Hive 3.1.3's official baseline; Hadoop 3.3/HBase 2.5/Spark 3.5 all still support it |
+| Java (Kafka only) | OpenJDK 11 | Kafka 3.x+ requires Java 11+; installed alongside Java 8, used only by Kafka's supervisor program |
 | Hadoop | 3.3.6 | |
 | HBase | 2.5.15 | last actively maintained 2.x line, matches Hadoop 3.3 |
 | Hive | 3.1.3 | last release with first-class Java 8 support and the classic HiveQL surface this course teaches |
 | Spark | 3.5.9 (`-bin-hadoop3`) | last Spark 3.x line; Spark 4.x was judged too new/unproven for a teaching stack at time of writing |
-| Flume | 1.11.0 | legacy ingestion concept, see labs/07 |
+| Flume | 1.11.0 | legacy ingestion concept, see labs/06 |
+| Kafka | 3.9.2 | last Kafka 3.x release; KRaft mode (no separate ZooKeeper process); see labs/07 |
 | MariaDB | Ubuntu 22.04 distro package | Hive metastore DB + RDBMS-ingestion lab source |
 | JDBC driver | mariadb-java-client 3.4.1 | replaces the obsolete `mysql-connector-java-5.1.23.jar` in `legacy/Spark/` |
 
@@ -186,8 +188,8 @@ only for labs 4, 5, 8, 10.
 | 03 | MapReduce | modern `WordCount` (see migration guide) |
 | 04 | HBase | column families renamed `personal_data`/`professional_data` |
 | 05 | Hive | Beeline, not the `hive` CLI; MovieLens partitioned tables |
-| 06 | Impala | deprecated/optional, not installed -- see labs/06 |
-| 07 | Flume | legacy ingestion concept, Kafka noted as future replacement |
+| 06 | Flume | legacy ingestion concept -- read the config, run the agent |
+| 07 | Kafka | modern replacement for Flume's role: durable, replayable topics |
 | 08 | RDBMS ingestion | replaces Sqoop: MariaDB -> Spark JDBC -> HDFS |
 | 09 | PySpark | WordCount over HDFS |
 | 10 | Spark SQL | `SparkSession`, not `HiveContext` |
@@ -201,7 +203,8 @@ Hive CLI (`hive`)            ->  Beeline (`beeline`)
 Sqoop                         ->  Spark JDBC (labs/08)
 HiveContext(sc)               ->  SparkSession.builder.enableHiveSupport()
 Spark Streaming (DStream)     ->  Structured Streaming
-Impala                        ->  deprecated/optional (Trino noted as a future option)
+Flume                          ->  Kafka (labs/06 -> labs/07)
+Impala                         ->  dropped entirely (Trino noted as a future option, not a lab)
 ```
 
 ## Repository vs. Docker image
@@ -374,6 +377,7 @@ stay running once you're done with them:
 | 02 HDFS, 03 MapReduce, 09 PySpark, 10 Spark SQL*, 11 Streaming | `core` (default) | -- |
 | 04 HBase | `labctl start hbase` | `labctl stop hbase` |
 | 05 Hive, 08 RDBMS ingestion | `labctl start hive` | `labctl stop hive` |
+| 07 Kafka | `labctl start kafka` | `labctl stop kafka` |
 
 \* labs/10's optional Hive-integration example needs `hive` running too.
 
@@ -430,10 +434,12 @@ confirmed to fail.
 
 ## Known limitations / intentionally left as legacy
 
-- **Impala**: not installed (see labs/06). Trino noted as a possible future
-  addition, not implemented.
+- **Impala**: dropped entirely, not even kept as a placeholder lab (was
+  the old Lab 6). Trino noted as a possible future addition, not
+  implemented -- see labs/07-kafka's intro for the full reasoning.
 - **Flume**: included but explicitly labeled a legacy ingestion concept
-  (labs/07); Kafka noted as a future replacement, not implemented.
+  (labs/06); **Kafka is now implemented** (labs/07, KRaft mode, Java 11
+  installed alongside Java 8 just for it), not merely noted as future work.
 - **Sqoop**: not installed (retired upstream); replaced by labs/08.
 - The original `org.myorg.WordCount` jar (`legacy/HDFS/wordcount.jar`) is
   kept for reference only; `labs/03-mapreduce` ships a rebuilt, modern

@@ -10,10 +10,11 @@ group_programs() {
     core)    echo "namenode datanode resourcemanager nodemanager" ;;
     hbase)   echo "hbase-zookeeper hbase-master hbase-regionserver" ;;
     hive)    echo "hive-metastore hive-server2" ;;
+    kafka)   echo "kafka" ;;
     jupyter) echo "jupyterlab" ;;
     mariadb) echo "mariadb" ;;
     spark)   echo "" ;; # spark-shell/pyspark/spark-submit are client tools, not daemons
-    all)     echo "mariadb namenode datanode resourcemanager nodemanager hbase-zookeeper hbase-master hbase-regionserver hive-metastore hive-server2 jupyterlab" ;;
+    all)     echo "mariadb namenode datanode resourcemanager nodemanager hbase-zookeeper hbase-master hbase-regionserver hive-metastore hive-server2 kafka jupyterlab" ;;
     *)       echo "" ;;
   esac
 }
@@ -25,7 +26,7 @@ Usage:
   labctl start <group>          start a service group
   labctl stop <group>           stop a service group
 
-Groups: core hbase hive jupyter mariadb spark all
+Groups: core hbase hive kafka jupyter mariadb spark all
   core = HDFS + YARN (start this first)
 EOF
 }
@@ -54,6 +55,7 @@ cmd_status() {
   printf "%-14s %s\n" "YARN" "$(group_state core)"
   printf "%-14s %s\n" "HBase" "$(group_state hbase)"
   printf "%-14s %s\n" "Hive" "$(group_state hive)"
+  printf "%-14s %s\n" "Kafka" "$(group_state kafka)"
   printf "%-14s %s\n" "MariaDB" "$(group_state mariadb)"
   printf "%-14s %s\n" "JupyterLab" "$(group_state jupyter)"
   echo

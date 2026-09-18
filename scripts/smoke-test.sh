@@ -92,6 +92,21 @@ check "Beeline query"     bash -c '
   beeline -u jdbc:hive2://localhost:10000/default -e "SHOW DATABASES;" 2>/dev/null | grep -qi default
 '
 
+labctl start kafka >/dev/null 2>&1
+check "Kafka broker"      bash -c '
+  export JAVA_HOME=/usr/lib/jvm/default-java11
+  for i in $(seq 1 30); do nc -z localhost 9092 && exit 0; sleep 3; done; exit 1
+'
+check "Kafka produce/consume" bash -c '
+  set -e
+  export JAVA_HOME=/usr/lib/jvm/default-java11
+  kafka-topics.sh --bootstrap-server localhost:9092 --delete --topic smoketest-topic >/dev/null 2>&1 || true
+  kafka-topics.sh --bootstrap-server localhost:9092 --create --topic smoketest-topic --partitions 1 --replication-factor 1 >/dev/null
+  echo "hello-kafka" | kafka-console-producer.sh --bootstrap-server localhost:9092 --topic smoketest-topic >/dev/null
+  timeout 15 kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic smoketest-topic --from-beginning --max-messages 1 2>/dev/null | grep -q hello-kafka
+  kafka-topics.sh --bootstrap-server localhost:9092 --delete --topic smoketest-topic >/dev/null 2>&1 || true
+'
+
 check "Spark"              bash -c 'spark-submit --version'
 check "PySpark"            bash -c '
   cat > /tmp/smoke-pyspark.py <<PYEOF
