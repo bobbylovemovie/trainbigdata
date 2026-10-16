@@ -28,4 +28,12 @@
     <name>yarn.log-aggregation-enable</name>
     <value>true</value>
   </property>
+  <property>
+    <name>yarn.resourcemanager.bind-host</name>
+    <value>0.0.0.0</value>
+  </property>
+  <property>
+    <name>yarn.nodemanager.bind-host</name>
+    <value>0.0.0.0</value>
+  </property>
 </configuration>
